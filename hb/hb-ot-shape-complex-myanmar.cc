@@ -277,8 +277,9 @@ setup_masks_myanmar (const hb_ot_shape_plan_t *plan HB_UNUSED,
    * and setup masks later on in a pause-callback. */
 
   unsigned int count = buffer->len;
+  hb_glyph_info_t *info = buffer->info;
   for (unsigned int i = 0; i < count; i++)
-    set_myanmar_properties (buffer->info[i]);
+    set_myanmar_properties (info[i]);
 }
 
 static void
@@ -451,8 +452,10 @@ insert_dotted_circles (const hb_ot_shape_plan_t *plan HB_UNUSED,
   /* Note: This loop is extra overhead, but should not be measurable. */
   bool has_broken_syllables = false;
   unsigned int count = buffer->len;
+  hb_glyph_info_t *info = buffer->info;
   for (unsigned int i = 0; i < count; i++)
-    if ((buffer->info[i].syllable() & 0x0F) == broken_cluster) {
+    if ((info[i].syllable() & 0x0F) == broken_cluster)
+    {
       has_broken_syllables = true;
       break;
     }
@@ -532,6 +535,24 @@ final_reordering (const hb_ot_shape_plan_t *plan,
   HB_BUFFER_DEALLOCATE_VAR (buffer, myanmar_position);
 }
 
+
+/* Uniscribe seems to have a shaper for 'mymr' that is like the
+ * generic shaper, except that it zeros mark advances GDEF_LATE. */
+const hb_ot_complex_shaper_t _hb_ot_complex_shaper_myanmar_old =
+{
+  "default",
+  NULL, /* collect_features */
+  NULL, /* override_features */
+  NULL, /* data_create */
+  NULL, /* data_destroy */
+  NULL, /* preprocess_text */
+  HB_OT_SHAPE_NORMALIZATION_MODE_DEFAULT,
+  NULL, /* decompose */
+  NULL, /* compose */
+  NULL, /* setup_masks */
+  HB_OT_SHAPE_ZERO_WIDTH_MARKS_BY_GDEF_LATE,
+  true, /* fallback_position */
+};
 
 const hb_ot_complex_shaper_t _hb_ot_complex_shaper_myanmar =
 {

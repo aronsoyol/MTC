@@ -209,14 +209,7 @@ decompose_current_character (const hb_ot_shape_normalize_context_t *c, bool shor
   else if (decompose_compatibility (c, buffer->cur().codepoint))
     skip_char (buffer);
   else
-  {
-    /* Not found, not decomposible;  If codepoint is invalid Unicode and
-     * font supports U+FFFD REPLACEMENT CHARACTER, use that instead. */
-    hb_codepoint_t FFFD_glyph;
-    if (buffer->cur().codepoint > 0x10FFFFu && c->font->get_glyph (0xFFFDu, 0, &FFFD_glyph))
-      glyph = FFFD_glyph;
     next_char (buffer, glyph); /* glyph is initialized in earlier branches. */
-  }
 }
 
 static inline void
@@ -296,6 +289,8 @@ _hb_ot_shape_normalize (const hb_ot_shape_plan_t *plan,
 			hb_buffer_t *buffer,
 			hb_font_t *font)
 {
+  _hb_buffer_assert_unicode_vars (buffer);
+
   hb_ot_shape_normalization_mode_t mode = plan->shaper->normalization_preference;
   const hb_ot_shape_normalize_context_t c = {
     plan,

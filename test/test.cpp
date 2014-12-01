@@ -161,7 +161,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		{
 			//int c= toupper((int)'c');
 			HBDrawTextW(ps.hdc, 50, 100);
-			HBDrawTextB(ps.hdc, 50, 200);
+			//HBDrawTextB(ps.hdc, 50, 200);
 		}
 		EndPaint(hWnd, &ps);
 		break;

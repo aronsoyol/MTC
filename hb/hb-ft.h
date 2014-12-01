@@ -28,6 +28,7 @@
 #define HB_FT_H
 
 #include "hb.h"
+
 #include <ft2build.h>
 #include FT_FREETYPE_H
 

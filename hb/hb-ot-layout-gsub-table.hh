@@ -200,7 +200,7 @@ struct SingleSubst
     TRACE_SERIALIZE (this);
     if (unlikely (!c->extend_min (u.format))) return TRACE_RETURN (false);
     unsigned int format = 2;
-    int delta;
+    int delta = 0;
     if (num_glyphs) {
       format = 1;
       /* TODO(serialize) check for wrap-around */
@@ -1338,7 +1338,7 @@ struct GSUB : GSUBGPOS
 void
 GSUB::substitute_start (hb_font_t *font, hb_buffer_t *buffer)
 {
-  _hb_buffer_allocate_gsubgpos_vars (buffer);
+  _hb_buffer_assert_gsubgpos_vars (buffer);
 
   const GDEF &gdef = *hb_ot_layout_from_face (font->face)->gdef;
   unsigned int count = buffer->len;
