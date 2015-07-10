@@ -68,6 +68,9 @@ void HBDrawText(HDC dc, int x, int y)
 	hb_font_t		*	font	= hb_ft_font_create(ft_face, NULL);
 	hb_buffer_t		*	buffer	= hb_buffer_create();
 
+	int* charWidthList = new int[max(lstrlen(text), 2)];
+	for (int i = 0; i < max(lstrlen(text), 2); i++)
+		charWidthList[i] = 0;
 	//
 	//set buffer
 	//	
@@ -85,10 +88,11 @@ void HBDrawText(HDC dc, int x, int y)
 	hb_glyph_info_t *	glyph_info	= hb_buffer_get_glyph_infos(buffer, 0);
 
 	WCHAR				dbg_info[6];
-	int					pen_x		= x;
-	int					yBaseLine	= y;
-	int					glyphPosX	= 0;
-	int					glyphPosY	= 0;
+	int					pen_x			= x;
+	int					yBaseLine		= y;
+	int					glyphPosX		= 0;
+	int					glyphPosY		= 0;
+	int					lastClstIndex	= 0;
 
 	for (int i = 0; i < glyph_count; ++i) 
 	{
@@ -104,8 +108,51 @@ void HBDrawText(HDC dc, int x, int y)
 		FreeTypeDrawBitmap(dc, &ft_face->glyph->bitmap, pen_x + ft_face->glyph->bitmap_left,
 				yBaseLine - ft_face->glyph->bitmap_top);
 		pen_x += ft_face->glyph->advance.x >> 6;
+
+		{
+			const ULONG U63 = 63;
+			int glyfWidth = ft_face->glyph->advance.x >> 6;
+			UINT fraction = ft_face->glyph->advance.x & U63;
+			float fWidth = (float)glyfWidth + (float)fraction / 64.0f;
+			float diff = fWidth - (int)fWidth;
+			if (fraction != 0)
+			{
+				int stop = 1;
+			}
+			int charCount = glyph_info[i].cluster - lastClstIndex;
+			if (charCount > 1)
+			{
+				int clustWidth = charWidthList[lastClstIndex];
+				int charWidth = clustWidth / charCount;
+				for (int j = lastClstIndex; j < glyph_info[i].cluster; j++)
+				{
+					charWidthList[j] = charWidth;
+				}
+			}
+			charWidthList[glyph_info[i].cluster] += glyfWidth;
+			lastClstIndex = glyph_info[i].cluster;
+		}
 	}
+	if (glyph_info[glyph_count].cluster < lstrlen(text) - 1)
+	{
+		int clustWidth = charWidthList[glyph_count - 1];
+		int charCount = lstrlen(text) - glyph_info[glyph_count].cluster;
+		int charWidth = clustWidth / charCount;
+		for (int j = lastClstIndex; j < lastClstIndex + charCount; j++)
+		{
+			charWidthList[j] = charWidth;
+		}
+	}
+	int dx = x;
+	for (int i = 0; i < lstrlen(text); i++)
+	{
+		dx += charWidthList[i];
+		MoveToEx(dc, dx, y, 0);
+		LineTo(dc, dx, y - 40);
+	}
+
 	OutputDebugString(L"\n");
+	delete[] charWidthList;
 	hb_buffer_destroy(buffer);
 	hb_font_destroy(font);
 	FT_Done_Face(ft_face);
