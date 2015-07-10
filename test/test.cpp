@@ -160,7 +160,8 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		// TODO: 在此添加任意绘图代码...
 		{
 			//int c= toupper((int)'c');
-			HBDrawTextW(ps.hdc, 50, 100);
+			wchar_t *text = L"ᠰᠠᠢᠨ ᠤᠤ 你好 hello";
+			HBDrawTextW(ps.hdc, 50, y, text);
 			//HBDrawTextB(ps.hdc, 50, 200);
 		}
 		EndPaint(hWnd, &ps);

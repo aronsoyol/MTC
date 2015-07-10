@@ -100,11 +100,11 @@ void FreeTypeDrawBitmap(HDC hdc, FT_Bitmap *bitmap, int x, int y){
 	}
 }
 
-void HBDrawText(HDC dc, int x, int y)
+void HBDrawText(HDC dc, int x, int y, const wchar_t* text)
 {
 	const char		*	fontFilePath = "../MongolianWhite.ttf";
 	const WCHAR		*	lFontFilePath = L"../MongolianWhite.ttf";
-	const WCHAR		*	text = L"ᠺᠣᠮᠫᠢᠦ᠋ᠲ᠋ᠧᠷ ᠠᠬ᠎ᠠ ᠡ ";
+	//const WCHAR		*	text = L"ᠰᠠᠢᠨ";
 	WCHAR buffer_path[256];
 
 	GetFullPathName(lFontFilePath, 256,buffer_path, 0);
@@ -209,14 +209,14 @@ void HBDrawText(HDC dc, int x, int y)
 	FT_Done_FreeType(ft_library);
 }
 
-void HBDrawTextB(HDC dc, int x, int y)
+void HBDrawTextB(HDC dc, int x, int y, const wchar_t* text)
 {
 	bw = 'b';
-	HBDrawText( dc, x, y);
+	HBDrawText(dc, x, y, text);
 }
 
-void HBDrawTextW(HDC dc, int x, int y)
+void HBDrawTextW(HDC dc, int x, int y, const wchar_t* text)
 {
 	bw = 'w';
-	HBDrawText( dc, x, y);
+	HBDrawText(dc, x, y, text);
 }
