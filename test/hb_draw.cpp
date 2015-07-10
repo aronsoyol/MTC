@@ -144,7 +144,7 @@ void HBDrawText(HDC dc, int x, int y, const wchar_t* text)
 	int					glyphPosY		= 0;
 	int					lastClstIndex	= 0;
 
-	for (int i = 0; i < glyph_count; ++i) 
+	for (int i = 0; i < glyph_count; ++i)
 	{
 		FT_UInt glyph_index = glyph_info[i].codepoint;
 		FT_Load_Glyph(ft_face, glyph_index, FT_LOAD_DEFAULT);
@@ -201,7 +201,7 @@ void HBDrawText(HDC dc, int x, int y, const wchar_t* text)
 		LineTo(dc, dx, y - 40);
 	}
 
-	OutputDebugString(L"\n");
+	OutputDebugString(L"\n"); 
 	delete[] charWidthList;
 	hb_buffer_destroy(buffer);
 	hb_font_destroy(font);
