@@ -38,6 +38,9 @@
     <ClInclude Include="hb_draw.h">
       <Filter>Header</Filter>
     </ClInclude>
+    <ClInclude Include="scrptrun.h">
+      <Filter>Header</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -47,6 +50,9 @@
       <Filter>Source</Filter>
     </ClCompile>
     <ClCompile Include="hb_draw.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="scrptrun.cpp">
       <Filter>Source</Filter>
     </ClCompile>
   </ItemGroup>

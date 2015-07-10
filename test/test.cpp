@@ -4,6 +4,7 @@
 #include "stdafx.h"
 #include "test.h"
 #include "hb_draw.h"
+#include "scrptrun.h"
 #define MAX_LOADSTRING 100
 
 // 全局变量:
@@ -161,6 +162,24 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		{
 			//int c= toupper((int)'c');
 			wchar_t *text = L"ᠰᠠᠢᠨ ᠤᠤ 你好 hello";
+			ScriptRunIterator runIter(text, 0, lstrlen(text));
+			int y = 0;
+			while (runIter.next())
+			{
+				int32_t     start	= runIter.getScriptStart();
+				int32_t     end		= runIter.getScriptEnd();
+				UScriptCode code	= runIter.getScriptCode();
+				wchar_t subText[1024];
+				int i = 0;
+				y += 50;
+				for (; i < end - start; i++)
+				{
+					subText[i] = text[start + i];
+				}
+				subText[i] = '\0';
+				TextOut(ps.hdc, 10, y, subText, lstrlen(subText));
+			}
+			
 			HBDrawTextW(ps.hdc, 50, y, text);
 			//HBDrawTextB(ps.hdc, 50, 200);
 		}
