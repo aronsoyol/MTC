@@ -63,7 +63,7 @@ void HBDrawText(HDC dc, int x, int y)
 
 	FT_Init_FreeType(&ft_library); /* initialize library */
 	FT_New_Face(ft_library, fontFilePath, 0, &ft_face); /* create face object */
-	FT_Set_Pixel_Sizes(ft_face, 0, 40); /* set character size */
+	FT_Set_Pixel_Sizes(ft_face, 0, 54); /* set character size */
 
 	hb_font_t		*	font	= hb_ft_font_create(ft_face, NULL);
 	hb_buffer_t		*	buffer	= hb_buffer_create();
