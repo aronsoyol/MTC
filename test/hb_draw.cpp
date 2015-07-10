@@ -18,23 +18,73 @@ void FreeTypeDrawBitmapMono(HDC hdc, FT_Bitmap *bitmap, int x, int y){
 	for(j = 0;j < height;++j){
 		for(i = 0;i < width;++i){
 			c = 255 - ((bitmap->buffer[j * pitch + (i / 8)] >> (7 - (i % 8))) & 1) * 255;
+			//if (c == 0)
 			SetPixel(hdc, x + i, y + j, RGB(c,c,c));
 		}
 	}
 }
 
 void FreeTypeDrawBitmap256(HDC hdc, FT_Bitmap *bitmap, int x, int y){
-	int i, j;
-	int width, height;
-	int c;
+	/*
+	http://web.comhem.se/~u34598116/content/FreeType2/main.html
+	*/
 
-	width = bitmap->width;
-	height = bitmap->rows;
+	/*
+	Note that the coloured bitmap isn't cached, which means that the
+	transparency calculation is performed on a character bitmap every time
+	a character is written to the video buffer. This isn't good if you are
+	concerned with performance.
+	*/
+	int x_max = bitmap->width;
+	int y_max = bitmap->rows;
+	//int x, y;
+	unsigned int fontColor = RGB(0, 0, 0);
+	unsigned int backgroundColor = GetSysColor(COLOR_GRAYTEXT);
 
-	for(j = 0;j < height;++j){
-		for(i = 0;i < width;++i){
-			c = 255 - bitmap->buffer[j * width + i];
-			SetPixel(hdc, x + i, y + j, RGB(c,c,c));
+	unsigned int fontColorB = ((fontColor & 0x00FF0000) >> 16);
+	unsigned int fontColorG = ((fontColor & 0x0000FF00) >> 8);
+	unsigned int fontColorR = (fontColor & 0x000000FF);
+
+	unsigned int backgroundColorB = ((backgroundColor & 0x00FF0000) >> 16);
+	unsigned int backgroundColorG = ((backgroundColor & 0x0000FF00) >> 8);
+	unsigned int backgroundColorR = (backgroundColor & 0x000000FF);
+
+	unsigned int aR = fontColorR - backgroundColorR;
+	unsigned int aG = fontColorG - backgroundColorG;
+	unsigned int aB = fontColorB - backgroundColorB;
+
+	float opacity;
+	float opacity2;
+	for (int i = 0; i < x_max; i++){        /* For each horizontal pixel..        */
+		for (int j = 0; j < y_max; j++){    /* ...in each row of the font bitmap. */
+
+			int c = bitmap->buffer[j * x_max + i];
+			//if (x >= WIDTH || y >= HEIGHT){ continue; }
+			if (c == 0){
+				/* Render background color. */
+					//SetPixel(hdc, x + i, y + j, backgroundColor);
+				continue;
+			}
+			else if (c == 255)
+			{
+				SetPixel(hdc, x + i, y + j, fontColor);
+			}
+			else {
+				/* Calculate alpha (opacity). *////////////
+				opacity = c / 255.0f;// bitmap->buffer[j * bitmap->width + i];
+				opacity2 = 1 - opacity;
+
+				int r = fontColorR * opacity + opacity2 * backgroundColorR;
+
+				int g = fontColorG * opacity + opacity2 * backgroundColorG;
+
+				int b = fontColorB * opacity + opacity2 * backgroundColorB;
+
+				COLORREF col = RGB(r, g, b);
+
+				SetPixel(hdc, x + i, y + j, RGB(r, g, b));
+				
+			}
 		}
 	}
 }
