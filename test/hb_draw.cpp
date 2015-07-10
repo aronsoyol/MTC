@@ -94,8 +94,8 @@ void HBDrawText(HDC dc, int x, int y)
 	{
 		FT_UInt glyph_index = glyph_info[i].codepoint;
 		FT_Load_Glyph(ft_face, glyph_index, FT_LOAD_DEFAULT);
-		
-		wsprintf(dbg_info, L"%d,", glyph_index/* + 87*/);
+
+		wsprintf(dbg_info, L"%d,", glyph_info[i].cluster/* + 87*/);
 		OutputDebugString(dbg_info);
 
 		/* convert to an anti-aliased bitmap */
