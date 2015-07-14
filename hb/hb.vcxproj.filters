@@ -84,6 +84,12 @@
     <ClInclude Include="hb-ucdn\unicodedata_db.h">
       <Filter>ucdn</Filter>
     </ClInclude>
+    <ClInclude Include="hb-icu.h">
+      <Filter>Header</Filter>
+    </ClInclude>
+    <ClInclude Include="hb-ot-shape-complex-arabic-win1256.hh">
+      <Filter>Header</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="hb-utf-private.hh">
@@ -332,6 +338,9 @@
       <Filter>ucdn</Filter>
     </ClCompile>
     <ClCompile Include="hb-ucdn.cc">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="hb-icu.cc">
       <Filter>Source</Filter>
     </ClCompile>
   </ItemGroup>

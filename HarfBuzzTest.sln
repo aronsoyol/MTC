@@ -1,6 +1,8 @@
 ﻿
-Microsoft Visual Studio Solution File, Format Version 11.00
-# Visual Studio 2010
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2013
+VisualStudioVersion = 12.0.21005.1
+MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "hb_test", "test\test.vcxproj", "{E055E530-7018-402D-81E6-161D58D39FCF}"
 	ProjectSection(ProjectDependencies) = postProject
 		{D4F57C4E-6682-41C9-A2D6-FED85929C7BF} = {D4F57C4E-6682-41C9-A2D6-FED85929C7BF}
