@@ -41,6 +41,21 @@
     <ClInclude Include="scrptrun.h">
       <Filter>Header</Filter>
     </ClInclude>
+    <ClInclude Include="noncopyable.hpp">
+      <Filter>Header</Filter>
+    </ClInclude>
+    <ClInclude Include="util.h">
+      <Filter>Header</Filter>
+    </ClInclude>
+    <ClInclude Include="AbstractTextLayout.h">
+      <Filter>Header</Filter>
+    </ClInclude>
+    <ClInclude Include="AbstractParaLayout.h">
+      <Filter>Header</Filter>
+    </ClInclude>
+    <ClInclude Include="ParaLayout.h">
+      <Filter>Header</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -53,6 +68,9 @@
       <Filter>Source</Filter>
     </ClCompile>
     <ClCompile Include="scrptrun.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="ParaLayout.cpp">
       <Filter>Source</Filter>
     </ClCompile>
   </ItemGroup>
