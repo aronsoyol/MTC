@@ -6,6 +6,7 @@
 #include "hb_draw.h"
 #include "scrptrun.h"
 #include "ParaLayout.h"
+#include "Canvas.h"
 #include "../hb/hb-ft.h"
 #define MAX_LOADSTRING 100
 

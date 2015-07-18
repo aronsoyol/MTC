@@ -56,6 +56,9 @@
     <ClInclude Include="ParaLayout.h">
       <Filter>Header</Filter>
     </ClInclude>
+    <ClInclude Include="Canvas.h">
+      <Filter>Header</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -71,6 +74,9 @@
       <Filter>Source</Filter>
     </ClCompile>
     <ClCompile Include="ParaLayout.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="Canvas.cpp">
       <Filter>Source</Filter>
     </ClCompile>
   </ItemGroup>
