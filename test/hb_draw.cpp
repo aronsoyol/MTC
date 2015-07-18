@@ -108,11 +108,16 @@ void FreeTypeDrawBitmap256(unsigned int *buffer, int width, int height, FT_Bitma
 	int Ymax = std::min(height, y + y_max);
 	int Xmax = std::min(width, x + x_max);
 	int buffer_length = height * width;
-	for (int row = 0; row < y_max && row + y < height; row++){        /* For each horizontal pixel..        */
-		for (int cl = 0; cl < x_max && x + cl < width; cl++){    /* ...in each row of the font bitmap. */
+	int start_cl =0 ,row = 0;
+	if (y < 0)
+		row = -y;
+	if (x < 0)
+		start_cl = -x;
+	for (; row < y_max && row + y < height; row++){        /* For each horizontal pixel..        */
+		for (int cl= start_cl; cl < x_max && x + cl < width; cl++){    /* ...in each row of the font bitmap. */
 			int grey = bitmap->buffer[row * x_max + cl];
 			
-			int index = width * (height - row - y) + x + cl;
+			int index = width * (height - 1 - row - y) + x + cl;
 			assert(index < buffer_length);
 			if (buffer[index] != 0)
 				buffer[index] = (unsigned int)col[grey];
@@ -168,7 +173,7 @@ void FreeTypeDrawBitmap256(HDC hdc, FT_Bitmap *bitmap, int x, int y, unsigned fo
 		//col[ii] = RGB(255-r, 255-g, 255-b);
 	}
 
-	for (int i = 1; i < x_max; i++){        /* For each horizontal pixel..        */
+	for (int i = 0; i < x_max; i++){        /* For each horizontal pixel..        */
 		for (int j = 0; j < y_max; j++){    /* ...in each row of the font bitmap. */
 			int grey = bitmap->buffer[j * x_max + i];
 			//if (grey != 0)
@@ -178,7 +183,6 @@ void FreeTypeDrawBitmap256(HDC hdc, FT_Bitmap *bitmap, int x, int y, unsigned fo
 }
 void FreeTypeDrawBitmap(unsigned int* buffer, int width, int height, int draw_mode, FT_Bitmap *bitmap, int x, int y, unsigned fore, unsigned back)
 {
-
 
 	if (x >= width || x + bitmap->width < 0 || y >= height || y + bitmap->rows < 0)
 		return;

@@ -1,10 +1,10 @@
-#pragma once 
+﻿#pragma once 
 #include "ParaLayout.h"
 #include "scrptrun.h"
 #include "../hb/hb-ft.h"
 #include "../hb/hb-icu.h"
 #include "hb_draw.h"
-
+#include <vector>
 namespace Aqitai{
 	namespace LayoutEngine{
 		//struct  Run
@@ -19,7 +19,7 @@ namespace Aqitai{
 		ParaLayout::ParaLayout(const FontOption  *fontOption_) :fontOption(fontOption_)
 		{
 			//fontOption = new FontOption(50);
-			this->run_list.emplace_back(0, 0, (UScriptCode)0);
+			//this->run_list.emplace_back(0, 0, 0, (UScriptCode)0);
 			//fontOption->back = RGB(255, 0, 0);
 			//fontOption->fore = RGB(0,0,0);
 		}
@@ -31,22 +31,31 @@ namespace Aqitai{
 		line_no - indicate which line to be paint
 		*/
 		void	ParaLayout::paint_line(int line_no)
-		{
-
+		{	
 		}
+		//int		ParaLayout::get_one_line(int start, int max_width)
+		//{
+		//	int line_width = 0;
+		//	int break_width = ;
+		//	while ()
+
+		//}
 		int		ParaLayout::break_line(int max_line_width)
 		{
 			line_list.clear();
-			ParaLayout::LineBreaker breaker(text.c_str(), text.length(), max_line_width, &char_width_list[0]);
-
-			int start = breaker.first();
-			for (int32_t end = breaker.next();
-				end != BreakIterator::DONE;
-				start = end, end = breaker.next())
+			if (text.length() == 0)
 			{
-				//printTextRange(boundary, start, end);
-				line_list.emplace_back(start, end);
-
+				line_list.emplace_back(text.c_str(), 0, 0);
+				return 1;
+			}
+			int start = 0;
+			LineBreaker breaker(text.c_str(), text.length(), max_line_width, &char_width_list[0]);
+			breaker.first();
+			int end = 0;
+			while ((end = breaker.next()) != -1)
+			{
+				line_list.emplace_back(text.c_str(), start, end);
+				start = end;
 			}
 			return line_list.size();
 		}
@@ -96,17 +105,71 @@ namespace Aqitai{
 
 		void	ParaLayout::itemize()
 		{
-			ScriptRunIterator runIter(text.c_str(), 0, text.length());
+			VerticalScriptBreaker vertBreaker(text.c_str(), text.length());
+			vertBreaker.first();
 			run_list.clear();
+			int item_start = 0;// vertBreaker.Start();
+			int item_length = text.length();// vertBreaker.End() - vertBreaker.Start();
+			std::vector<std::wstring> lines;
+			/*	while (vertBreaker.next())
+				{
+				item_start = vertBreaker.Start();
+				item_length = vertBreaker.End() - vertBreaker.Start();
+				*/
+			ScriptRunIterator runIter(text.c_str() + item_start, 0, item_length);
+
+			UErrorCode error;
+
+			wchar_t ch0 = L'《';
+			int ch1 = '?';
+			char16_t code = '《';
+			UBlockCode block0 = ublock_getCode(L'《');
+			UBlockCode block1 = ublock_getCode(L'1');
+			UScriptCode sc0 = uscript_getScript(L'《', &error);
+			UScriptCode sc1 = uscript_getScript(L'a', &error);
+			UScriptCode sc2 = uscript_getScript(L'1', &error);
+			UScriptCode sc3 = uscript_getScript(L',', &error);
+			UScriptCode sc4 = uscript_getScript(L'!', &error);
 			while (runIter.next())
 			{
-				int32_t     start	= runIter.getScriptStart();
-				int32_t     end		= runIter.getScriptEnd();
-				UScriptCode code	= runIter.getScriptCode();
-				run_list.emplace_back(start, end - start, code);
+				int32_t     start = runIter.getScriptStart();
+				int32_t     end = runIter.getScriptEnd();
+				UScriptCode code = runIter.getScriptCode();
+				run_list.emplace_back(text.c_str(), item_start + start, end - start, code);
+				lines.emplace_back(text.c_str() + item_start + start, end - start);
 			}
 		}
+		void	ParaLayout::place()
+		{
 
+			_lineBreakList.clear();
+			UErrorCode status;
+			BreakIterator * breaker = BreakIterator::createLineInstance(Locale::getUS(), status);
+			breaker->setText(text.c_str());
+			breaker->first();
+			int start = 0;
+			while (breaker->next() != BreakIterator::DONE)
+			{
+				int end = breaker->current();
+				int width = get_chars_width(start, end);
+				_lineBreakList.emplace_back(start, end, width);
+				start = end;
+			}
+
+			_charBreakList.clear();
+			breaker = BreakIterator::createCharacterInstance(Locale::getUS(), status);
+			breaker->setText(text.c_str());
+			breaker->first();
+			start = 0;
+			while (breaker->next() != BreakIterator::DONE)
+			{
+				int end = breaker->current();
+				int width = get_chars_width(start, end);
+				_charBreakList.emplace_back(start, end, width);
+				start = end;
+			}
+
+		}
 		void	ParaLayout::shape()
 		{
 			glyph_list.reserve(text.length());
@@ -157,9 +220,10 @@ namespace Aqitai{
 			//
 			//set buffer
 			//	
+			hb_direction_t dir = run.dir();// run.script == USCRIPT_MONGOLIAN ? HB_DIRECTION_LTR : HB_DIRECTION_TTB;
 			hb_script_t scriptTag = hb_icu_script_to_script(run.script);
 			hb_buffer_add_utf16(buffer, (uint16_t*)text.c_str(), text.length(), run.start, run.length);
-			hb_buffer_set_direction(buffer, HB_DIRECTION_LTR); /* or LTR */
+			hb_buffer_set_direction(buffer, dir); /* or LTR */
 			hb_buffer_set_script(buffer, scriptTag); /* see hb-unicode.h */
 			hb_buffer_set_flags(buffer, (hb_buffer_flags_t)(HB_BUFFER_FLAG_PRESERVE_DEFAULT_IGNORABLES | HB_BUFFER_FLAG_EOT));
 			//hb_buffer_guess_segment_properties(buffer);
@@ -183,14 +247,17 @@ namespace Aqitai{
 			for (int i = 0; i < glyph_count; ++i)
 			{
 				FT_UInt glyph_index = glyph_info[i].codepoint;
-				FT_Load_Glyph(fontOption->ft_face[fontIndex], glyph_index, FT_LOAD_DEFAULT);
-
-				//wsprintf(dbg_info, L"%d,", glyph_info[i].cluster/* + 87*/);
-				//OutputDebugString(dbg_info);
+				//FT_Load_Glyph(fontOption->ft_face[fontIndex], glyph_index, FT_LOAD_DEFAULT);
 
 				/* convert to an anti-aliased bitmap */
-				//FT_Render_Glyph(fontOption.ft_face[fontIndex]->glyph, FT_RENDER_MODE_NORMAL);
-				int glyfWidth = fontOption->ft_face[fontIndex]->glyph->advance.x >> 6;
+				//FT_Render_Glyph(fontOption->ft_face[fontIndex]->glyph, FT_RENDER_MODE_NORMAL);
+
+
+				/*不管是TTB还是LTR 这个变量都是0*/
+				//fontOption->ft_face[fontIndex]->glyph->advance.y
+
+				int advance = dir == HB_DIRECTION_TTB ? std::abs(glyph_pos[i].y_advance) : glyph_pos[i].x_advance;
+				int glyfWidth = advance >> 6;
 				{
 					charWidthList[glyph_info[i].cluster - offset] += glyfWidth;
 					int cluster_char_count = glyph_info[i].cluster - lastClstIndex;
@@ -204,15 +271,16 @@ namespace Aqitai{
 					}
 					lastClstIndex = glyph_info[i].cluster;
 				}
+
 				glyph_list.emplace_back(
-					glyph_info[i].codepoint, 
-					glyph_pos[i].x_advance, 
-					glyph_pos[i].y_advance, 
-					glyph_pos[i].x_offset, 
-					glyph_pos[i].y_advance, 
+					glyph_info[i].codepoint,
+					glyph_pos[i].x_advance,
+					glyph_pos[i].y_advance,
+					glyph_pos[i].x_offset,
+					glyph_pos[i].y_offset,
 					glyph_info[i].cluster,
 					&run_list[run_index]
-					);
+				);
 			}
 
 			for (int i = 0; i < run.length; i++)
@@ -228,17 +296,43 @@ namespace Aqitai{
 		void	ParaLayout::set_text(const wchar_t* text_, int length)
 		{
 			text = std::wstring(text_, length);
-			this->run_list.reserve(length);
+			run_list.reserve(length);
 			itemize();
+			
 			shape();
+			place();
 		}
-		void	ParaLayout::draw(HDC dc, int x, int y)
+		void	ParaLayout::vdraw(HDC hdc, int x, int y)
 		{
+			float line_height =
+				fontOption->ft_face[0]->ascender - fontOption->ft_face[0]->descender;
+			line_height = line_height * 50 / fontOption->ft_face[0]->units_per_EM;
 			std::vector<text_line>::iterator itor = line_list.begin();
 			int l = 0;
 			for (; itor != line_list.end(); ++itor)
 			{
-				draw_chars(dc, (*itor).start,(*itor).end, x, y+l);
+				draw_chars(hdc, (*itor).start, (*itor).end, x + l, y);
+				l += line_height;
+			}
+		}
+		void	ParaLayout::hdraw(HDC hdc, int x, int y)
+		{
+			float line_height =
+				fontOption->ft_face[0]->ascender - fontOption->ft_face[0]->descender;
+			line_height = line_height * 50 / fontOption->ft_face[0]->units_per_EM;
+
+			draw(hdc, x, y + line_height);
+		}
+		void	ParaLayout::draw(HDC dc, int x, int y)
+		{
+			float line_height =
+				fontOption->ft_face[0]->ascender - fontOption->ft_face[0]->descender;
+			line_height = line_height * 50 / fontOption->ft_face[0]->units_per_EM;
+			std::vector<text_line>::iterator itor = line_list.begin();
+			int l = 0;
+			for (; itor != line_list.end(); ++itor)
+			{
+				draw_chars(dc, (*itor).start, (*itor).end, x, y + l);
 				l += 50;
 			}
 
@@ -250,7 +344,7 @@ namespace Aqitai{
 			int l = 0;
 			for (; itor != line_list.end(); ++itor)
 			{
-				draw_chars(buffer, width, height, (*itor).start, (*itor).end, x, y + l);
+				draw_chars(buffer, width, height, (*itor).start, (*itor).end, x + l, y );
 				l += 50;
 			}
 		}
@@ -263,6 +357,10 @@ namespace Aqitai{
 		}
 		int ParaLayout::draw_chars(unsigned int* buffer, int width, int height, int start, int end, int x, int y)
 		{
+			/*
+			对于CJK等字形方向和行的方向相对有旋转角度的文字使用通过Harfbuzz,TTB 计算的位置
+			对于蒙文等字形相对于行没有旋转的run应该使用LTB方向设置harfbuzz，并旋转glyph
+			*/
 			glyph_vector::iterator itor = glyph_list.begin();
 
 			int pen_x = x;
@@ -272,21 +370,43 @@ namespace Aqitai{
 			int g_index = 0;
 			for (; itor != glyph_list.end() && (*itor).cluster < end; ++itor, g_index++)
 			{
-				if ((*itor).cluster < start)
+				glyph * glyph_ptr = &(*itor);
+				if (glyph_ptr->cluster < start)
 					continue;
+				const hb_direction_t dir	= glyph_ptr->run->dir();
+				const int fontIndex = glyph_ptr->run->script == USCRIPT_MONGOLIAN ? MONGOL_FONT : OTHER_FONT;
+				FT_UInt glyph_index = glyph_ptr->index;
 
-				const int fontIndex = (*itor).run->script == USCRIPT_MONGOLIAN ? MONGOL_FONT : OTHER_FONT;
-				FT_UInt glyph_index = (*itor).index;
-
-				if ((*itor).image == 0)
+				FT_Glyph image = glyph_ptr->image;
+				if (image == 0)
 				{
 					FT_Load_Glyph(fontOption->ft_face[fontIndex], glyph_index, FT_LOAD_DEFAULT);
-					FT_Get_Glyph(fontOption->ft_face[fontIndex]->glyph, &((*itor).image));
+					FT_Get_Glyph(fontOption->ft_face[fontIndex]->glyph, &image);
+					if (dir != HB_DIRECTION_TTB)
+					{
+#define PI 3.141592
+						FT_Matrix     matrix;              /* transformation matrix */
+						FT_Vector     pen;                 /* untransformed origin */
+						pen.x = 0;
+						pen.y = 0;
+						/* set up matrix */
+						//int degree = 3600;
+						double deg = -90;
+						double len = 2;
+						double rad = deg * PI / 180.0;
+						matrix.xx = (FT_Fixed)(cos(rad) * 0x10000L);
+						matrix.xy = (FT_Fixed)(-sin(rad) * 0x10000L);
+						matrix.yx = (FT_Fixed)(sin(rad) * 0x10000L);
+						matrix.yy = (FT_Fixed)(cos(rad) * 0x10000L);
+						FT_Glyph_Transform(image, &matrix, &pen);
+					}
+					
+					
 				}
 
-				if ((*itor).image->format != FT_GLYPH_FORMAT_BITMAP)
+				if (image->format != FT_GLYPH_FORMAT_BITMAP)
 				{
-					FT_Glyph_To_Bitmap(&(*itor).image, FT_RENDER_MODE_NORMAL, 0, 0);
+					FT_Glyph_To_Bitmap(&image, FT_RENDER_MODE_NORMAL, 0, 0);
 				}
 				else
 				{
@@ -294,17 +414,57 @@ namespace Aqitai{
 				}
 				FT_GlyphSlot;
 				FT_Glyph;
-				
+
 				int offset_y = (*itor).y_offset / 64;
-				int offset_x = (*itor).x_offset / 64;
-				FT_BitmapGlyph  bit = (FT_BitmapGlyph)(*itor).image;
-				if (pen_x > width || pen_y - bit->top - offset_y > height)
-					break;
+				int offset_x = 0;
+
+				if (dir == HB_DIRECTION_TTB)
+				{
+					//std::swap(offset_x, offset_y);
+				}
+
+				FT_BitmapGlyph bit = (FT_BitmapGlyph)image;
+
+				//int advance = image->advance.y;// dir == HB_DIRECTION_TTB ? : -image->advance.y;
+				//advance = (*itor).x_advance;
+				int yy = pen_y - bit->top /*- offset_y*/;
 				
-				FreeTypeDrawBitmap(buffer, width, height, DARW_MODE_TRANSPARENT, &bit->bitmap,
-					pen_x + bit->left + offset_x,
-					pen_y - bit->top - offset_y, fontOption->fore, fontOption->back);
-				pen_x += (*itor).x_advance / 64;
+	/*			int ascender = fontOption->ft_face[1]->ascender >> 6;*/
+				int descender = 0;
+				if (dir == HB_DIRECTION_TTB)
+				{
+					yy -= offset_y;
+					offset_x = (*itor).x_offset / 64;
+				}
+				else
+				{
+					offset_x = -(fontOption->ft_face[0]->ascender - fontOption->ft_face[0]->descender >> 6) / 2;
+				}
+					
+				//yy -= dir == HB_DIRECTION_TTB ? fontOption->ft_face[1]->ascender >> 6 : 0;
+				//int tmp = bit->top + offset_y;
+				//yy = pen_y;
+				if (pen_x < width && yy < height)
+				{
+					FreeTypeDrawBitmap(buffer, width, height, DARW_MODE_TRANSPARENT, &bit->bitmap,
+						pen_x + bit->left + offset_x ,
+						yy, fontOption->fore, fontOption->back);
+				}
+				int dy1 = glyph_ptr->y_advance >> 6;
+				int dy2 = image->advance.y >> 16;
+
+				
+				
+				if (dir == HB_DIRECTION_TTB)
+				{
+					pen_x += glyph_ptr->x_advance >> 6;
+					pen_y -= glyph_ptr->y_advance >> 6;
+				}
+				else
+				{
+					pen_x += image->advance.x >> 16;
+					pen_y -= image->advance.y >> 16;
+				}
 			}
 			return 0;
 		}
@@ -318,16 +478,32 @@ namespace Aqitai{
 			RECT rect;
 			GetClipBox(dc, &rect);
 			int g_index = 0;
+			//pen_y += 50;
 			for (; itor != glyph_list.end() && (*itor).cluster < end; ++itor, g_index++)
 			{
 				if ((*itor).cluster < start)
 					continue;
 
+				const Run * run = (*itor).run;
+				hb_direction_t dir = run->dir();// (*itor).run->script == USCRIPT_MONGOLIAN ? HB_DIRECTION_LTR : HB_DIRECTION_TTB;
+				
 				const int fontIndex = (*itor).run->script == USCRIPT_MONGOLIAN ? MONGOL_FONT : OTHER_FONT;
 				FT_UInt glyph_index = (*itor).index;
 
 				if ((*itor).image == 0)
 				{
+					if (run->script == USCRIPT_HAN || run->script == USCRIPT_HIRAGANA || run->script == USCRIPT_KATAKANA)
+					{
+						FT_Matrix     matrix;              /* transformation matrix */
+						FT_Vector     pen;                 /* untransformed origin */
+						pen.x = 0;
+						pen.y = 0;
+						/* set up matrix */
+						matrix.xx = (FT_Fixed)(cos(-90) * 0x10000L);
+						matrix.xy = (FT_Fixed)(-sin(-90) * 0x10000L);
+						matrix.yx = (FT_Fixed)(sin(-90) * 0x10000L);
+						matrix.yy = (FT_Fixed)(cos(-90) * 0x10000L);
+					}
 					FT_Load_Glyph(fontOption->ft_face[fontIndex], glyph_index, FT_LOAD_DEFAULT);
 					FT_Get_Glyph(fontOption->ft_face[fontIndex]->glyph, &((*itor).image));
 				}
@@ -346,13 +522,17 @@ namespace Aqitai{
 					break;
 				int offset_y = (*itor).y_offset / 64;
 				int offset_x = (*itor).x_offset / 64;
-				FT_BitmapGlyph  bit = (FT_BitmapGlyph)(*itor).image;
+				FT_Glyph glyph = (*itor).image;
+				FT_BitmapGlyph bit = (FT_BitmapGlyph)glyph;
+				//pen_y += 50;
+				
+				int advance = /*std::abs(glyph->advance.x >> 16);*/ (dir == HB_DIRECTION_TTB ? -(*itor).y_advance : (*itor).x_advance)/64;
+				//int y = dir == HB_DIRECTION_TTB ? pen_y : pen_y - bit->top - offset_y;
 				FreeTypeDrawBitmap(dc, DARW_MODE_TRANSPARENT, &bit->bitmap,
-					pen_x + bit->left + offset_x,
+					pen_x + bit->left /*+ offset_x*/,
 					pen_y - bit->top - offset_y, fontOption->fore, fontOption->back);
-				pen_x += (*itor).x_advance / 64;
-				//FT_Done_Glyph((*itor).image);
-				//(*itor).image = 0;
+				
+				pen_y += advance/* / 64*/;
 			}
 			return 0;
 		}
