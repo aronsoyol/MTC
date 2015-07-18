@@ -22,7 +22,7 @@ LRESULT CALLBACK	WndProc(HWND, UINT, WPARAM, LPARAM);
 INT_PTR CALLBACK	About(HWND, UINT, WPARAM, LPARAM);
 FontOption fo(50, RGB(0, 0, 0), RGB(255, 255, 255));
 Aqitai::LayoutEngine::ParaLayout layout(&fo);
-wchar_t *text = L"ᠶᠡᠬᠡ ᠬᠤᠷᠠᠯ ᠤᠨ ᠨᠠᠮᠤᠷ ᠤᠨ ᠴᠢᠭᠤᠯᠭᠠᠨ ᠵᠠᠪᠰᠠᠷᠯᠠᠬᠤ ᠶᠢᠨ ᠡᠮᠦᠨᠡᠬᠡᠨ᠂ ᠮᠤᠨᠭᠭᠤᠯ ᠬᠡᠯᠡᠨ ᠤ᠋ ᠲᠤᠬᠠᠢ ᠬᠠᠤᠯᠢ ᠶᠢ ᠠᠨᠭᠬ᠎ᠠ ᠤᠳᠠᠭ᠋᠎ᠠ ᠪᠠᠲᠤᠯᠠᠯ ᠠ᠃ 2015 ᠤᠨ ᠋ᠤ᠋ 7 ᠳ᠋ᠤᠭᠠᠷ ᠎ᠰᠠᠷ᠎ᠠ ᠶᠢᠨ 1 ᠡᠴᠡ ᠬᠡᠷᠡᠭᠵᠢᠭᠦᠯᠵᠦ ᠡᠬᠢᠯᠡᠬᠦ᠂ ᠨᠠᠢ᠍ᠮᠠᠨ ᠪᠦᠯᠦᠭ ᠬᠤᠷᠢᠨ ᠳᠦᠷᠪᠡᠨ ᠵᠦᠢᠯ ᠲᠠᠢ ᠡᠨᠡ ᠬᠠᠥᠯᠢ ᠳᠤ᠂ ᠣᠯᠠᠨ ᠨᠡᠢ᠋ᠲᠡ ᠶᠢᠨ ᠮᠡᠳᠡᠬᠦ ᠱᠠᠭᠠᠷᠳᠠᠯ᠋ᠭ᠋᠎᠋ᠡ᠋ ᠲᠠᠢ ᠶᠠᠮᠠᠷ ᠵᠢᠭᠠᠯᠲᠠ ᠨᠤᠭᠤᠳ ᠳᠤᠰᠭᠠᠭᠰᠠᠨ ᠪᠤᠢ ? 今日はワールドカップ2015";
+wchar_t *text = L"ᠴᠢᠭᠤᠯᠭᠠᠨ?";
 //wchar_t *text = L"ᠲᠦᠪ";
 
 int APIENTRY _tWinMain(HINSTANCE hInstance,
@@ -102,7 +102,7 @@ ATOM MyRegisterClass(HINSTANCE hInstance)
 	wcex.hInstance		= hInstance;
 	wcex.hIcon			= LoadIcon(hInstance, MAKEINTRESOURCE(IDI_TEST));
 	wcex.hCursor		= LoadCursor(NULL, IDC_ARROW);
-	wcex.hbrBackground	= (HBRUSH)GetStockObject(WHITE_BRUSH);
+	wcex.hbrBackground = (HBRUSH)0;// GetStockObject(WHITE_BRUSH);
 	wcex.lpszMenuName	= 0;// MAKEINTRESOURCE(IDC_TEST);
 	wcex.lpszClassName	= szWindowClass;
 	wcex.hIconSm		= LoadIcon(wcex.hInstance, MAKEINTRESOURCE(IDI_SMALL));
@@ -177,7 +177,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 	case WM_SIZE:
 	{
 					int height = HIWORD(lParam);
-					layout.break_line(height  - 50);
+					layout.break_line(height - 100);
 					return 0;
 	}
 	case WM_PAINT:
@@ -239,10 +239,14 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 
 				//layout.vdraw(ps.hdc, 0, 10);
 				int base_line = 50;
-				layout.draw(&bitmap_buffer[0], width, height, 500, base_line);
+				layout.draw(&bitmap_buffer[0], width, height, 50, base_line);
 
 				for (int i = 0; i < width; i++)
-					bitmap_buffer[(height - 50) * width + i] = 0;
+				{
+					bitmap_buffer[(height -1 - 50) * width + i] = 0;
+					bitmap_buffer[50 * width + i] = 0;
+				}
+					
 				
 				for (int i = 0; i < width; i++)
 				{
@@ -253,7 +257,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 				for (int i = 0; i < height; i++)
 				{
 					bitmap_buffer[(height - 1 - i) * width] = 0;
-					bitmap_buffer[(height - 1 - i) * width + 500] = 0;
+					bitmap_buffer[(height - 1 - i) * width + 50] = 0;
 					bitmap_buffer[(height - 1 - i) * width + width - 1] = 0;
 					assert((height - 1 - i) * width + width - 1 < buff_size);
 					assert((height - 1 - i) * width + 500);

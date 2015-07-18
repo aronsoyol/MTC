@@ -255,7 +255,15 @@ namespace Aqitai{
 
 				/*不管是TTB还是LTR 这个变量都是0*/
 				//fontOption->ft_face[fontIndex]->glyph->advance.y
+				
 
+				/*
+				字形旋转后90后宽度会有以像素左右变化，所以一下两种解决方案
+				1.LTR方向的run就水平绘制后，在做旋转
+				2.以旋转后的宽度为准
+
+				选择2的话，Glyph的x_offset, y_offset就没有用了，所以要以Harfbuzz为准，不用FT_Matrix旋转Glyph
+				*/
 				int advance = dir == HB_DIRECTION_TTB ? std::abs(glyph_pos[i].y_advance) : glyph_pos[i].x_advance;
 				int glyfWidth = advance >> 6;
 				{
@@ -345,6 +353,19 @@ namespace Aqitai{
 			for (; itor != line_list.end(); ++itor)
 			{
 				draw_chars(buffer, width, height, (*itor).start, (*itor).end, x + l, y );
+				
+				/*实验用的代码，画出字符边界*/
+				int h = 0;
+				for (int j = (*itor).start; j < (*itor).end; j++)
+				{
+					h += char_width_list[j];
+					for (int k = 0; k < 25; k++)
+					{
+						buffer[(height - 1 - h - y) * width + x + k + l - 25] = 0;
+					}
+				}
+				/*结束*/
+
 				l += 50;
 			}
 		}
@@ -384,6 +405,9 @@ namespace Aqitai{
 					FT_Get_Glyph(fontOption->ft_face[fontIndex]->glyph, &image);
 					if (dir != HB_DIRECTION_TTB)
 					{
+						/*
+						用FT_Matrix旋转Glyph后，Glyph的尺寸和harfbuzz计算的尺寸不完全一样，所以这个方法需要改进
+						*/
 #define PI 3.141592
 						FT_Matrix     matrix;              /* transformation matrix */
 						FT_Vector     pen;                 /* untransformed origin */
@@ -416,7 +440,7 @@ namespace Aqitai{
 				FT_Glyph;
 
 				int offset_y = (*itor).y_offset / 64;
-				int offset_x = 0;
+				int offset_x = (*itor).x_offset / 64;
 
 				if (dir == HB_DIRECTION_TTB)
 				{
@@ -438,9 +462,10 @@ namespace Aqitai{
 				}
 				else
 				{
+					yy -= offset_x;
 					offset_x = -(fontOption->ft_face[0]->ascender - fontOption->ft_face[0]->descender >> 6) / 2;
 				}
-					
+				wchar_t dbg[100];
 				//yy -= dir == HB_DIRECTION_TTB ? fontOption->ft_face[1]->ascender >> 6 : 0;
 				//int tmp = bit->top + offset_y;
 				//yy = pen_y;
@@ -450,10 +475,21 @@ namespace Aqitai{
 						pen_x + bit->left + offset_x ,
 						yy, fontOption->fore, fontOption->back);
 				}
-				int dy1 = glyph_ptr->y_advance >> 6;
-				int dy2 = image->advance.y >> 16;
 
+				for (int k = 0; k < 25; k++)
+				{
+					buffer[(height - 1 - pen_y) * width + pen_x + k] = 0xff0000;
+				}
 				
+				int dy1 = glyph_ptr->x_advance >> 6;
+				int dy2 = image->advance.y >> 16;
+				
+				
+				/*
+				发现旋转后的字形的宽度比Harfbuzz获得的宽度大一点
+				*/
+				wsprintf(dbg, L"[hb:%d,ft:%d],", dy1, dy2);
+				OutputDebugString(dbg);
 				
 				if (dir == HB_DIRECTION_TTB)
 				{
