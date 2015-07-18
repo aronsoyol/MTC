@@ -173,18 +173,13 @@ namespace Aqitai{
 				boundary->first();
 				int end = boundary->next();
 				_current_width = get_chars_width(_start, _start + end);
-				if (_current_width > max_line_width)
+				if (_current_width >= max_line_width)
 				{
 					delete boundary; 
 					boundary = 0;
-					/*
-					这个方法会导致簇的中间换行的结果，需要重新考虑
-					*/
-					boundary = BreakIterator::createCharacterInstance(Locale::getUS(), status);
-					boundary->setText(_text + _start);
-					boundary->first();
-					end = boundary->next();
-					_current_width = get_chars_width(_start, _start + end);
+
+					_start += end;
+					return _start;
 				}
 				int break_width = 0;
 				int tmp_start = end;
