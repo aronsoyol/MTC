@@ -1,4 +1,4 @@
-#pragma once 
+﻿#pragma once 
 
 #include <string>
 #include <algorithm>
@@ -177,6 +177,9 @@ namespace Aqitai{
 				{
 					delete boundary; 
 					boundary = 0;
+					/*
+					这个方法会导致簇的中间换行的结果，需要重新考虑
+					*/
 					boundary = BreakIterator::createCharacterInstance(Locale::getUS(), status);
 					boundary->setText(_text + _start);
 					boundary->first();
@@ -232,7 +235,14 @@ namespace Aqitai{
 			std::vector<Break> _charBreakList;
 			std::wstring text;
 			std::vector<Run> run_list;
+			
+			/*
+			char_width_list只能用于对光标，插入符的定位。不能用于换行位置的判断
+			例如两个字符由一个字形显示的时候，插入符应在这个字形的中间显示，
+			但是这两个字符的中间是不能换行的，行的宽度的计算应该使用字形宽度
+			*/
 			std::vector<int> char_width_list;
+			
 			std::vector<text_line> line_list;
 			using glyph_index = int;
 			using glyph_vector = std::vector<glyph>;

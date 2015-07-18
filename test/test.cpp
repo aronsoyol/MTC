@@ -22,7 +22,7 @@ LRESULT CALLBACK	WndProc(HWND, UINT, WPARAM, LPARAM);
 INT_PTR CALLBACK	About(HWND, UINT, WPARAM, LPARAM);
 FontOption fo(50, RGB(0, 0, 0), RGB(255, 255, 255));
 Aqitai::LayoutEngine::ParaLayout layout(&fo);
-wchar_t *text = L"ᠪᠠᠢᠨ᠎ᠠ今日はワールドカップ2015";
+wchar_t *text = L"ᠶᠡᠬᠡ ᠬᠤᠷᠠᠯ ᠤᠨ ᠨᠠᠮᠤᠷ ᠤᠨ ᠴᠢᠭᠤᠯᠭᠠᠨ ᠵᠠᠪᠰᠠᠷᠯᠠᠬᠤ ᠶᠢᠨ ᠡᠮᠦᠨᠡᠬᠡᠨ᠂ ᠮᠤᠨᠭᠭᠤᠯ ᠬᠡᠯᠡᠨ ᠤ᠋ ᠲᠤᠬᠠᠢ ᠬᠠᠤᠯᠢ ᠶᠢ ᠠᠨᠭᠬ᠎ᠠ ᠤᠳᠠᠭ᠋᠎ᠠ ᠪᠠᠲᠤᠯᠠᠯ ᠠ᠃ 2015 ᠤᠨ ᠋ᠤ᠋ 7 ᠳ᠋ᠤᠭᠠᠷ ᠎ᠰᠠᠷ᠎ᠠ ᠶᠢᠨ 1 ᠡᠴᠡ ᠬᠡᠷᠡᠭᠵᠢᠭᠦᠯᠵᠦ ᠡᠬᠢᠯᠡᠬᠦ᠂ ᠨᠠᠢ᠍ᠮᠠᠨ ᠪᠦᠯᠦᠭ ᠬᠤᠷᠢᠨ ᠳᠦᠷᠪᠡᠨ ᠵᠦᠢᠯ ᠲᠠᠢ ᠡᠨᠡ ᠬᠠᠥᠯᠢ ᠳᠤ᠂ ᠣᠯᠠᠨ ᠨᠡᠢ᠋ᠲᠡ ᠶᠢᠨ ᠮᠡᠳᠡᠬᠦ ᠱᠠᠭᠠᠷᠳᠠᠯ᠋ᠭ᠋᠎᠋ᠡ᠋ ᠲᠠᠢ ᠶᠠᠮᠠᠷ ᠵᠢᠭᠠᠯᠲᠠ ᠨᠤᠭᠤᠳ ᠳᠤᠰᠭᠠᠭᠰᠠᠨ ᠪᠤᠢ ? 今日はワールドカップ2015";
 //wchar_t *text = L"ᠲᠦᠪ";
 
 int APIENTRY _tWinMain(HINSTANCE hInstance,
