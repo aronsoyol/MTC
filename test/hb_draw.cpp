@@ -1,11 +1,10 @@
-﻿
-#include <windows.h>
-#include <vector>
-#include "hb_draw.h"
+﻿#include <vector>
 #include <algorithm>
 #include <cassert>
+#include "util.h"
+
+namespace MTC{	namespace Util{
 char bw  ;
-const char* fontName[] = { "../MongolianWhite.ttf", "../msyh.ttf" };
 
 float cal_table[] =
 { 
@@ -27,47 +26,29 @@ float cal_table[] =
 	0.94, 0.95, 0.95, 0.95, 0.96, 0.96, 0.96, 0.97, 0.97, 0.98, 0.98, 0.98, 0.99, 0.99, 1.00, 1.00 
 };
 
-FontOption::FontOption(int size, int fore_, int back_)
+bool Rotate90Degree(const FT_Bitmap *src, FT_Bitmap *dest)
 {
-	FT_Init_FreeType(&ft_library); /* initialize library */
-	fore = fore_;
-	back = back_;
-	//GetFullPathName(fontName[0], MAX_PATH, fullPath, 0);
-	for (int i = 0; i < 2; i++)
+	//if (src->pixel_mode=)
+	int size = src->width * src->rows;
+	
+	dest->buffer = new unsigned char[size];
+	int height = src->width;
+	int width = src->rows;
+	for (int i = 0; i < height; i++)
 	{
-		FT_New_Face(ft_library, fontName[i], 0, &ft_face[i]); /* create face object */
-		FT_Set_Pixel_Sizes(ft_face[i], 0, size); /* set character size */
-		hb_ft_font[i] = hb_ft_font_create(ft_face[i], NULL);
-	}
-}
-FontOption::~FontOption()
-{
-	for (int i = 0; i < 2; i++)
-	{
-		hb_font_destroy(hb_ft_font[i]);
-		FT_Done_Face(ft_face[i]);
-	}
-	FT_Done_FreeType(ft_library);
-}
-
-void FreeTypeDrawBitmapMono(HDC hdc, FT_Bitmap *bitmap, int x, int y){
-	int i, j;
-	int width, height, pitch;
-	int c;
-
-	width = bitmap->width;
-	height = bitmap->rows;
-	pitch = bitmap->pitch;
-
-	for(j = 0;j < height;++j){
-		for(i = 0;i < width;++i){
-			c = 255 - ((bitmap->buffer[j * pitch + (i / 8)] >> (7 - (i % 8))) & 1) * 255;
-			//if (c == 0)
-			SetPixel(hdc, x + i, y + j, RGB(c,c,c));
+		for (int j = 0; j < width; j++)
+		{
+			assert(i * width + j < size);
+			int index = (src->rows - 1 - j) * src->width + i;
+			assert(index < size && index >= 0);
+			dest->buffer[i * width + j] = src->buffer[index];
 		}
 	}
+	dest->rows = src->width;
+	dest->width = src->rows;
+	return true;
 }
-void FreeTypeDrawBitmap256(unsigned int *buffer, int width, int height, FT_Bitmap *bitmap, int x, int y, unsigned fore, unsigned back)
+void FreeTypeDrawBitmap256(unsigned int * buffer, int width, int height, DRAW_MODE mode, FT_Bitmap *bitmap, int x, int y, unsigned fore, unsigned back)
 {
 	int x_max = bitmap->width;
 	int y_max = bitmap->rows;
@@ -335,3 +316,4 @@ void HBDrawTextW(HDC dc, int draw_mode, const FontOption* fontOption, int x, int
 	bw = 'w';
 	HBDrawText(dc, draw_mode, fontOption, x, y, text, icuScriptCode);
 }
+}}

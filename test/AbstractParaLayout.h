@@ -1,10 +1,11 @@
-#pragma once 
+#ifndef __MTC_LAYOUTENGINE_ABSTRACTPARALAYOUT_H
+#define __MTC_LAYOUTENGINE_ABSTRACTPARALAYOUT_H
+
 #include <utility>
 #include "util.h"
 
 
-
-namespace Aqitai{namespace LayoutEngine{
+namespace MTC{namespace LayoutEngine{
 		
 struct Rect;
 struct Run;
@@ -35,3 +36,4 @@ public:
 };
 
 }}
+#endif /*__MTC_LAYOUTENGINE_ABSTRACTPARALAYOUT_H*/

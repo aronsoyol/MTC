@@ -20,11 +20,11 @@ ATOM				MyRegisterClass(HINSTANCE hInstance);
 BOOL				InitInstance(HINSTANCE, int);
 LRESULT CALLBACK	WndProc(HWND, UINT, WPARAM, LPARAM);
 INT_PTR CALLBACK	About(HWND, UINT, WPARAM, LPARAM);
-FontOption fo(50, RGB(0, 0, 0), RGB(255, 255, 255));
-Aqitai::LayoutEngine::ParaLayout layout(&fo);
 wchar_t *text = L"ᠴᠢᠭᠤᠯᠭᠠᠨ?";
 //wchar_t *text = L"ᠲᠦᠪ";
 
+MTC::LayoutEngine::ParaLayout *pLayout;
+MTC::Util::FontOption *pFontOption;
 int APIENTRY _tWinMain(HINSTANCE hInstance,
                      HINSTANCE hPrevInstance,
                      LPTSTR    lpCmdLine,
@@ -33,6 +33,10 @@ int APIENTRY _tWinMain(HINSTANCE hInstance,
 	
 	int ret = 0;
 	{
+		MTC::Util::FontOption fo(50, RGB(0, 0, 0), RGB(255, 255, 255));
+		MTC::LayoutEngine::ParaLayout layout(&fo);
+		pLayout = &layout;
+		pFontOption = &fo;
 
 	UNREFERENCED_PARAMETER(hPrevInstance);
 	UNREFERENCED_PARAMETER(lpCmdLine);
@@ -176,9 +180,9 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		break;
 	case WM_SIZE:
 	{
-					int height = HIWORD(lParam);
-					layout.break_line(height - 100);
-					return 0;
+		int height = HIWORD(lParam);
+		pLayout->break_line(height-100);
+		return 0;
 	}
 	case WM_PAINT:
 		hdc = BeginPaint(hWnd, &ps);
@@ -239,7 +243,6 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 
 				//layout.vdraw(ps.hdc, 0, 10);
 				int base_line = 50;
-				layout.draw(&bitmap_buffer[0], width, height, 50, base_line);
 
 				for (int i = 0; i < width; i++)
 				{
@@ -247,6 +250,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 					bitmap_buffer[50 * width + i] = 0;
 				}
 					
+				pLayout->draw(&bitmap_buffer[0], width, height, 50, base_line);
 				
 				for (int i = 0; i < width; i++)
 				{

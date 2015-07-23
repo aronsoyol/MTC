@@ -1,8 +1,9 @@
-#pragma once
+#ifndef __MTC_CANVAS_H
+#define __MTC_CANVAS_H
 #include "noncopyable.hpp"
 #include <stdio.h>
-namespace  Aqitai{namespace Canvas{
-	class ImplCanvas :util::noncopyable
+namespace  MTC{namespace Canvas{
+	class ImplCanvas : Util::noncopyable
 	{
 		int height_;
 		int width_;
@@ -32,7 +33,7 @@ namespace  Aqitai{namespace Canvas{
 		}
 	};
 
-	class Canvas :util::noncopyable
+	class Canvas :Util::noncopyable
 	{
 		ImplCanvas * canvas_;
 	public:
@@ -46,3 +47,4 @@ namespace  Aqitai{namespace Canvas{
 		}
 	};
 }}
+#endif /*MTC_CANVAS_H*/

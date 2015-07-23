@@ -5,9 +5,8 @@
 #include <hb-ft.h>
 #include <hb-icu.h>
 #include <vector>
-namespace Aqitai{
-	namespace LayoutEngine{
 		class LineBreaker
+namespace MTC{	namespace LayoutEngine{
 		{
 		private:
 			const int *char_width_list;

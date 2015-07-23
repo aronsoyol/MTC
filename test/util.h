@@ -1,7 +1,8 @@
-﻿#pragma once 
+﻿#ifndef __MTC_UTIL_H
+#define __MTC_UTIL_H
 #include <windows.h>
-namespace Aqitai
-{
+
+namespace MTC{namespace Util{
 	struct Point
 	{
 		long x;
@@ -30,4 +31,6 @@ namespace Aqitai
 		long	height();// { bottom - top; }
 		Size&	Size();
 	};
-}
+}}
+
+#endif /*__MTC_UTIL_H*/

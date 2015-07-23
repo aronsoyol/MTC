@@ -1,8 +1,10 @@
-#pragma once 
+#ifndef __MTC_LAYOUTENGINE_ABSTRACTTEXTLAYOUT_H
+#define __MTC_LAYOUTENGINE_ABSTRACTTEXTLAYOUT_H
+
 #include <utility>
 #include "util.h"
 
-namespace Aqitai{ namespace LayoutEngine{
+namespace MTC{ namespace LayoutEngine{
 
 struct Rect;
 class AbstractTextLayoutEngeine
@@ -16,3 +18,4 @@ public :
 };
 
 }}
+#endif /*__MTC_LAYOUTENGINE_ABSTRACTTEXTLAYOUT_H*/

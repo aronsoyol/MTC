@@ -1,5 +1,5 @@
-﻿#pragma once 
-
+﻿#ifndef __MTC_PARA_LAYOUT_H 
+#define __MTC_PARA_LAYOUT_H
 #include <string>
 #include <algorithm>
 #include <vector>
@@ -9,8 +9,9 @@
 #include <ft2build.h>
 #include FT_FREETYPE_H
 #include FT_STROKER_H
-namespace Aqitai{
+namespace MTC{
 	namespace LayoutEngine{
+		using namespace Util;
 		struct glyph
 		{
 			int index;
@@ -166,7 +167,7 @@ namespace Aqitai{
 			using glyph_index = int;
 			using glyph_vector = std::vector<glyph>;
 			glyph_vector glyph_list;
-			const FontOption  *fontOption;
+			const MTC::Util::FontOption  *fontOption;
 		private:
 			virtual void	itemize();
 			virtual void	shape();
@@ -179,7 +180,7 @@ namespace Aqitai{
 		public:
 
 			/**/
-			ParaLayout(const FontOption  *fontOption);
+			ParaLayout(const MTC::Util::FontOption  *fontOption);
 			
 			/**/
 			~ParaLayout();
@@ -218,3 +219,4 @@ namespace Aqitai{
 
 	}
 }
+#endif /*__MTC_PARA_LAYOUT_H*/
