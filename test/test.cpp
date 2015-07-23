@@ -8,6 +8,13 @@
 #include "Canvas.h"
 #include <hb-ft.h>
 #include "util.h"
+
+
+
+#include <png.h>
+#include <pngstruct.h>
+#include <pnginfo.h>
+
 #define MAX_LOADSTRING 100
 
 // 全局变量:
@@ -20,11 +27,25 @@ ATOM				MyRegisterClass(HINSTANCE hInstance);
 BOOL				InitInstance(HINSTANCE, int);
 LRESULT CALLBACK	WndProc(HWND, UINT, WPARAM, LPARAM);
 INT_PTR CALLBACK	About(HWND, UINT, WPARAM, LPARAM);
-wchar_t *text = L"ᠴᠢᠭᠤᠯᠭᠠᠨ?";
-//wchar_t *text = L"ᠲᠦᠪ";
 
+wchar_t *text = L"ᠨᠥᠬᠦᠳ ᠮᠢᠨᠢ᠂ ᠲᠠ ᠨᠠᠷ ᠬᠣᠨᠢᠨ ᠤ ᠨᠣᠣᠰᠤ ᠪᠠᠷ ᠦᠢᠯᠡᠳᠪᠦᠷᠢᠯᠡᠭᠰᠡᠨ ᠭᠣᠶᠤ ᠰᠠᠢᠬᠠᠨ ᠬᠤᠪᠴᠠᠰᠤ ᠡᠮᠦᠰᠦᠭᠡᠳ ᠨᠢᠰᠭᠡᠯ ᠳᠦ ᠰᠠᠭᠤᠵᠤ ᠡᠭᠦᠯᠡᠨ ᠳᠤᠮᠳᠠᠭᠤᠷ ᠠᠶᠠᠯᠠᠬᠤ ᠳᠤ ᠪᠠᠨ; ᠭᠢᠯᠲᠠᠭᠠᠨᠠᠭᠰᠠᠨ ᠰᠠᠢᠬᠠᠨ ᠦᠬᠡᠷ ᠦᠨ ᠠᠷᠠᠰᠤᠨ ᠱᠠᠬᠠᠢ ᠡᠮᠦᠰᠦᠭᠡᠳ ᠴᠠᠷᠳᠠᠮᠠᠯ ᠵᠠᠮ  ᠢᠶᠠᠷ᠂ ᠡᠰᠡᠬᠦᠯ᠎ᠡ ᠴᠡᠩᠬᠡᠷ ᠤᠰᠤ ᠨᠣᠭᠤᠭᠠᠨ ᠤᠳᠠ ᠲᠠᠢ ᠴᠡᠴᠡᠷᠯᠢᠭ  ᠢᠶᠡᠷ ᠵᠤᠭᠠᠯᠠᠬᠤ ᠳᠤ ᠪᠠᠨ; ᠲᠠᠨᠢᠯ ᠰᠠᠢᠬᠠᠨ ᠨᠠᠢᠵᠠ ᠲᠠᠢ ᠪᠠᠨ ᠭᠤᠸᠠᠩᠵᠠᠨ ᠳᠤ ᠪᠠᠭᠤᠵᠤ ᠬᠠᠯᠠᠭᠤᠨ ᠲᠣᠭᠤᠭᠠᠨ ᠳᠤ ᠰᠢᠵᠢᠭᠢᠨᠠᠨ ᠪᠤᠴᠠᠯᠵᠤ ᠪᠠᠢᠭ᠎ᠠ ᠰᠠᠢᠬᠠᠨ ᠠᠮᠲᠠ ᠲᠠᠢ ᠬᠣᠨᠢᠨ ᠮᠢᠬᠠᠨ ᠱᠥᠯᠦ ᠬᠠᠯᠪᠠᠭᠠᠳᠠᠵᠤ ᠬᠤᠨᠳᠠᠭ᠎ᠠ ᠡᠷᠭᠦᠬᠦ ᠳ᠋ᠦ ᠪᠡᠨ᠂ ᠡᠳᠡᠭᠡᠷ ᠶᠠᠭᠤᠮ᠎ᠠ ᠪᠦᠬᠦᠨ ᠦ ᠲᠦᠭᠦᠬᠡᠢ ᠡᠳ᠋ ᠢ ᠬᠠᠩᠭᠠᠬᠤ ᠶᠢᠨ ᠲᠥᠯᠦᠭᠡ ᠮᠠᠯᠴᠢᠨ ᠬᠥᠮᠦᠨ ᠵᠤᠨ ᠤ ᠰᠢᠲᠠᠮ᠎ᠠ ᠨᠠᠷᠠ᠂ ᠬᠠᠪᠤᠷ ᠤᠨ ᠬᠠᠷ᠎ᠠ ᠬᠠᠪᠰᠠᠷᠭ᠎ᠠ᠂ ᠡᠪᠦᠯ ᠦᠨ ᠬᠦᠢᠲᠡᠨ ᠰᠢᠭᠤᠷᠭᠠᠨ ᠳᠤ ᠲᠤᠵᠢ ᠯᠠ ᠮᠠᠯ ᠤᠨ ᠬᠣᠢᠨ᠎ᠠ ᠠᠴᠠ ᠳᠠᠭᠠᠵᠤ᠂ ᠬᠠᠲᠠᠭᠤᠵᠢᠯᠲᠠᠢ ᠬᠥᠳᠡᠯᠮᠦᠷᠢᠯᠡᠵᠦ ᠪᠠᠢᠳᠠᠭ ᠶᠠᠪᠤᠳᠠᠯ ᠰᠡᠳᠭᠢᠯ ᠳᠦ ᠴᠢᠨᠢ ᠣᠷᠤᠳᠠᠭ ᠤᠤ？";
 MTC::LayoutEngine::ParaLayout *pLayout;
 MTC::Util::FontOption *pFontOption;
+void readpng(LPBYTE* png, int *width, int *height);
+void DrawBitmap(HDC hdc, HBITMAP hBmp)
+{
+	HBITMAP	hBmpPrev;
+	HDC	hDCBmp;
+
+
+	hDCBmp = CreateCompatibleDC(hdc);
+	hBmpPrev = (HBITMAP)SelectObject(hDCBmp, hBmp);
+	BitBlt(hdc, 0, 0, 100, 100, hDCBmp, 0, 0, SRCCOPY);
+	SelectObject(hDCBmp, hBmpPrev);
+	DeleteDC(hDCBmp);
+
+}
+HBITMAP LoadPng(const std::wstring &strFilename);
 int APIENTRY _tWinMain(HINSTANCE hInstance,
                      HINSTANCE hPrevInstance,
                      LPTSTR    lpCmdLine,
@@ -37,42 +58,40 @@ int APIENTRY _tWinMain(HINSTANCE hInstance,
 		MTC::LayoutEngine::ParaLayout layout(&fo);
 		pLayout = &layout;
 		pFontOption = &fo;
+		UNREFERENCED_PARAMETER(hPrevInstance);
+		UNREFERENCED_PARAMETER(lpCmdLine);
+		//readpng();
+ 		// TODO: 在此放置代码。
+		MSG msg;
+		HACCEL hAccelTable;
 
-	UNREFERENCED_PARAMETER(hPrevInstance);
-	UNREFERENCED_PARAMETER(lpCmdLine);
-
- 	// TODO: 在此放置代码。
-	MSG msg;
-	HACCEL hAccelTable;
-
-	// 初始化全局字符串
-	LoadString(hInstance, IDS_APP_TITLE, szTitle, MAX_LOADSTRING);
-	LoadString(hInstance, IDC_TEST, szWindowClass, MAX_LOADSTRING);
+		// 初始化全局字符串
+		LoadString(hInstance, IDS_APP_TITLE, szTitle, MAX_LOADSTRING);
+		LoadString(hInstance, IDC_TEST, szWindowClass, MAX_LOADSTRING);
 
 		layout.set_text(text);
 
+		MyRegisterClass(hInstance);
 
-	MyRegisterClass(hInstance);
-
-	// 执行应用程序初始化:
-	if (!InitInstance (hInstance, nCmdShow))
-	{
-		return FALSE;
-	}
-
-	hAccelTable = LoadAccelerators(hInstance, MAKEINTRESOURCE(IDC_TEST));
-
-	// 主消息循环:
-	while (GetMessage(&msg, NULL, 0, 0))
-	{
-		if (!TranslateAccelerator(msg.hwnd, hAccelTable, &msg))
+		// 执行应用程序初始化:
+		if (!InitInstance (hInstance, nCmdShow))
 		{
-			TranslateMessage(&msg);
-			DispatchMessage(&msg);
+			return FALSE;
 		}
+
+		hAccelTable = LoadAccelerators(hInstance, MAKEINTRESOURCE(IDC_TEST));
+
+		// 主消息循环:
+		while (GetMessage(&msg, NULL, 0, 0))
+		{
+			if (!TranslateAccelerator(msg.hwnd, hAccelTable, &msg))
+			{
+				TranslateMessage(&msg);
+				DispatchMessage(&msg);
+			}
+		}
+		ret = (int)msg.wParam;
 	}
-	ret = (int)msg.wParam;
-}
 	_CrtDumpMemoryLeaks();
 	return ret;
 }
@@ -158,7 +177,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 	int wmId, wmEvent;
 	PAINTSTRUCT ps;
 	HDC hdc;
-
+	std::vector<unsigned int> bitmap_buffer;
 	switch (message)
 	{
 	case WM_COMMAND:
@@ -234,9 +253,13 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 				int base_line = 50;
 				pLayout->draw(&bitmap_buffer[0], width, height, 50, base_line);
 
+				HBITMAP bmp = LoadPng(L"face/f000.png");
+				
 				int ret = SetDIBitsToDevice(ps.hdc, 0, 0, width, height, 0, 0, 0, height, &bitmap_buffer[0], &bmpInfo, DIB_RGB_COLORS);
+				DrawBitmap(ps.hdc, bmp);
 
 			}
+
 		}
 		EndPaint(hWnd, &ps);
 		break;
@@ -267,4 +290,308 @@ INT_PTR CALLBACK About(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
 		break;
 	}
 	return (INT_PTR)FALSE;
+}
+void readpng(LPBYTE* png, int *width, int *height)
+{
+	// ファイルを開く
+	FILE *fp;
+	::fopen_s(&fp, "face/f000.png", "rb");
+
+	png_structp pPng;
+	png_infop pInfo;
+	DWORD dwWidth, dwHeight;
+	int nBitDepth, nColorType, nInterlaceType;
+
+	// ここからファイルを読み込み
+	pPng = png_create_read_struct(PNG_LIBPNG_VER_STRING,
+		NULL, NULL, NULL);
+	pInfo = png_create_info_struct(pPng);
+	png_init_io(pPng, fp);
+	png_read_info(pPng, pInfo);
+	png_get_IHDR(pPng, pInfo, (png_uint_32 *)&dwWidth, (png_uint_32 *)&dwHeight,
+		&nBitDepth, &nColorType, &nInterlaceType,
+		NULL, NULL);
+	// ここまでで必要な情報が一通り取得できます
+
+	// ここからPngファイルの情報を元にBitmapファイル用の情報を作成
+	//BITMAPFILEHEADER bf;
+	//BITMAPINFOHEADER bi;
+
+	//bi.biSize = sizeof(BITMAPINFOHEADER);
+	*width = pInfo->width;
+	*height = pInfo->height;
+	//bi.biPlanes = 1;
+	//bi.biBitCount = pInfo->pixel_depth;
+	//bi.biCompression = BI_RGB;
+	int biSizeImage = pInfo->height * (((pInfo->width * pInfo->pixel_depth / 8) + 3) & ~3);
+	//bi.biClrUsed = 0;
+
+	//bf.bfType = ('M' << 8) | 'B';
+	//bf.bfSize = sizeof(BITMAPFILEHEADER)+sizeof(BITMAPINFOHEADER)+bi.biSizeImage;
+	//bf.bfOffBits = sizeof(BITMAPFILEHEADER)+sizeof(BITMAPINFOHEADER);
+	// ここまででBitmapの必要な情報が作成される
+
+	png_set_bgr(pPng);
+
+	BYTE *byBmp = (BYTE*)::malloc(biSizeImage);
+	*png = byBmp;
+	// 必要そうなチャンクの読み込み処理
+	// おまじないみたいなもの
+#define screen_gamma 2.2
+	double image_gamma;
+	png_color_16p image_background;
+
+	int intent;
+	if (png_get_sRGB(pPng, pInfo, &intent))
+	{
+		png_set_gamma(pPng, screen_gamma, 0.45455);
+	}
+	else
+	if (png_get_gAMA(pPng, pInfo, &image_gamma))
+	{
+		png_set_gamma(pPng, screen_gamma, image_gamma);
+	}
+	if ((pInfo->color_type & PNG_COLOR_MASK_ALPHA)
+		|| png_get_valid(pPng, pInfo, PNG_INFO_tRNS))
+	{
+		if (png_get_bKGD(pPng, pInfo, &image_background))
+		{
+			png_set_background(pPng, image_background,
+				PNG_BACKGROUND_GAMMA_FILE, 1, 1.0);
+		}
+		else
+		{
+			png_color_16 my_background = { 0, 0, 0, 0, };
+			png_set_background(pPng, &my_background,
+				PNG_BACKGROUND_GAMMA_SCREEN, 0, 1.0);
+		}
+	}
+
+	// ここでパレット登録
+	int number_passes;
+
+	number_passes = png_set_interlace_handling(pPng);
+	png_read_update_info(pPng, pInfo);
+
+	//if (pInfo->color_type == PNG_COLOR_TYPE_PALETTE)
+	{
+		int num_palette;
+		png_colorp palette;
+
+		png_get_PLTE(pPng, pInfo, &palette, &num_palette);
+
+		for (int i = 0; i < num_palette; i++)
+		{
+			byBmp[i * 4 + 0] = palette[i].blue;
+			byBmp[i * 4 + 1] = palette[i].green;
+			byBmp[i * 4 + 2] = palette[i].red;
+		}
+	}
+
+	// で、ここから実データの処理
+	int row_size;
+	int image_size;
+	int i, j;
+
+	row_size = (png_get_rowbytes(pPng, pInfo) + 3) & ~3;
+	image_size = row_size * pInfo->height;
+
+	BYTE *pRow;
+	for (i = 0; i < number_passes; i++)
+	{
+		for (j = pInfo->height - 1; j >= 0; j--)
+		{
+			pRow = &byBmp[j*row_size];
+			png_read_row(pPng, pRow, NULL);
+		}
+	}
+	png_read_end(pPng, NULL);
+
+	// ファイルを閉じる
+	::fclose(fp);
+
+	//// ここまでで byBmp に Bitmap画像としてデータが入ります
+	//// あとは好きなように処理できます
+	//// とりあえず、画像として保存してみたり
+	//::fopen_s(&fp, "a.bmp", "wb");
+
+	//size_t size = ::fwrite(&bf, sizeof(BITMAPFILEHEADER), 1, fp);
+	//size = ::fwrite(&bi, sizeof(BITMAPINFOHEADER), 1, fp);
+	//size = ::fwrite(byBmp, sizeof(BYTE), bi.biSizeImage, fp);
+
+	//::fclose(fp);
+
+	//// ビットマップハンドルに渡してみたり
+	//BITMAPINFO bmpInfo;
+	//bmpInfo.bmiHeader = bi;
+
+	//LPBYTE lpBuf;
+	//// ビットマップハンドル取得
+	//HBITMAP hBitmap = ::CreateDIBSection(NULL, &bmpInfo,
+	//	DIB_RGB_COLORS,
+	//	(void**)&lpBuf, NULL, 0);
+	//for (int i = 0; i < (int)bi.biSizeImage; i++)
+	//	lpBuf[i] = byBmp[i];
+
+	// と、いろいろできるかも
+
+	// 確保したメモリの開放は忘れずに
+	::free(byBmp);
+}
+//---------------------------------------------------------------------------
+// LoadPng用ファイル読み込みプロシージャ
+void PngReadProc(png_structp png_ptr, png_bytep data, png_size_t length) {
+	ReadFile(png_get_io_ptr(png_ptr), data, length, (DWORD*)&length, NULL);
+}
+
+//---------------------------------------------------------------------------
+// LoadPng用4色形式→16色形式変換関数
+void to4bpp(png_structp png_ptr, png_row_infop row_info, png_bytep data) {
+	static const png_byte pix[] = {
+		0x00, 0x01, 0x02, 0x03, 0x10, 0x11, 0x12, 0x13,
+		0x20, 0x21, 0x22, 0x23, 0x30, 0x31, 0x32, 0x33,
+	};
+	png_uint_32 rowb;
+	png_byte *p, *q, c;
+
+	rowb = (row_info->width + 1) / 2;
+	q = data + rowb;
+	p = data + rowb / 2;
+
+	if (rowb % 2 == 1) {
+		c = *p;
+		*(--q) = pix[c >> 4];
+	}
+	while (p > data) {
+		c = *(--p);
+		*(--q) = pix[c & 0x0f];
+		*(--q) = pix[c >> 4];
+	}
+	row_info->bit_depth = 4;
+	row_info->pixel_depth = 4;
+	row_info->rowbytes = rowb;
+}
+
+//---------------------------------------------------------------------------
+// PNGファイルを読み込む
+HBITMAP LoadPng(const std::wstring &strFilename) {
+	HANDLE hFile = CreateFile(strFilename.c_str(), GENERIC_READ, 0, NULL, OPEN_EXISTING, 0, NULL);
+	if (hFile == INVALID_HANDLE_VALUE)
+		return NULL;
+
+	// PNG読み込み開始
+	png_struct *png_ptr = png_create_read_struct(PNG_LIBPNG_VER_STRING, NULL, NULL, NULL);
+	if (!png_ptr) {
+		CloseHandle(hFile);
+		return NULL;
+	}
+
+	png_info *info_ptr = png_create_info_struct(png_ptr);
+	if (!info_ptr) {
+		png_destroy_read_struct(&png_ptr, NULL, NULL);
+		CloseHandle(hFile);
+		return NULL;
+	}
+	png_info *end_info = png_create_info_struct(png_ptr);
+	if (!end_info) {
+		png_destroy_read_struct(&png_ptr, &info_ptr, NULL);
+		CloseHandle(hFile);
+		return NULL;
+	}
+
+	png_set_read_fn(png_ptr, hFile, PngReadProc);
+	png_uint_32 nWidth, nHeight;
+	int nDepth, nPal;
+	int nPngDepth, nColorType, nInterlaceType, nCompType, nFilterType;
+
+	png_read_info(png_ptr, info_ptr);
+	png_get_IHDR(png_ptr, info_ptr, &nWidth, &nHeight, &nPngDepth, &nColorType, &nInterlaceType, &nCompType, &nFilterType);
+
+	if (nColorType == PNG_COLOR_TYPE_RGB || nColorType == PNG_COLOR_TYPE_RGB_ALPHA) {
+		nPngDepth = 24;
+		nDepth = 24;
+		nPal = 0;
+	}
+	else {
+		switch (nPngDepth) {
+		case 2:  nDepth = 4; break;
+		case 16: nDepth = 8; break;
+		default: nDepth = nPngDepth; break;
+		}
+		nPal = 1 << nDepth;
+	}
+
+	std::vector <png_color> vPalette;
+	if (nPal > 0)
+		vPalette.resize(nPal);
+	int nRowBytes = (nWidth * nDepth + 31) / 32 * 4;
+	int nImgBytes = nRowBytes * nHeight;
+	BYTE *pImgPtr = (BYTE*)GlobalAlloc(GMEM_FIXED, nImgBytes);
+	std::vector<BYTE*> vRowPtr;
+	vRowPtr.reserve(nHeight);
+	for (int y = nHeight - 1; y >= 0; --y)
+		vRowPtr.push_back(pImgPtr + y * nRowBytes);
+
+	if (nColorType & PNG_COLOR_MASK_ALPHA)
+		png_set_strip_alpha(png_ptr);
+	if (nPngDepth == 2)
+		png_set_read_user_transform_fn(png_ptr, to4bpp);
+	else if (nPngDepth == 16)
+		png_set_strip_16(png_ptr);
+	if (nColorType == PNG_COLOR_TYPE_RGB || nColorType == PNG_COLOR_TYPE_RGB_ALPHA)
+		png_set_bgr(png_ptr);
+	png_read_update_info(png_ptr, info_ptr);
+
+	if (nPal > 0) {
+		if (nColorType == PNG_COLOR_TYPE_PALETTE) {
+			png_color *palette;
+			int num_palette;
+			png_get_PLTE(png_ptr, info_ptr, &palette, &num_palette);
+			if (num_palette > nPal)
+				num_palette = nPal;
+			memset(&vPalette[0], 0, nPal * sizeof png_color);
+			memcpy(&vPalette[0], palette, num_palette * sizeof png_color);
+		}
+		else {
+			int depth = nPngDepth == 16 ? 8 : nPngDepth;
+			png_build_grayscale_palette(depth, &vPalette[0]);
+		}
+	}
+
+	png_read_image(png_ptr, &vRowPtr[0]);
+	png_read_end(png_ptr, end_info);
+	png_destroy_read_struct(&png_ptr, &info_ptr, &end_info);
+
+	CloseHandle(hFile);
+
+	BITMAPINFO* bi = (BITMAPINFO*)GlobalAlloc(GMEM_FIXED, sizeof BITMAPINFOHEADER + nPal * sizeof RGBQUAD);
+
+	memset(bi, 0, sizeof BITMAPINFOHEADER);
+	bi->bmiHeader.biSize = sizeof BITMAPINFOHEADER;
+	bi->bmiHeader.biWidth = nWidth;
+	bi->bmiHeader.biHeight = nHeight;
+	bi->bmiHeader.biPlanes = 1;
+	bi->bmiHeader.biBitCount = nDepth;
+	bi->bmiHeader.biCompression = BI_RGB;
+	bi->bmiHeader.biSizeImage = nImgBytes;
+	bi->bmiHeader.biClrUsed = nPal;
+
+	for (int i = 0; i < nPal; ++i) {
+		bi->bmiColors[i].rgbRed = vPalette[i].red;
+		bi->bmiColors[i].rgbGreen = vPalette[i].green;
+		bi->bmiColors[i].rgbBlue = vPalette[i].blue;
+	}
+
+	HWND hwnd = GetDesktopWindow();
+	HDC hdc = GetDC(hwnd);
+	char *pBits;
+	HBITMAP hBitmap = CreateDIBSection(hdc, bi, DIB_RGB_COLORS, (void**)&pBits, NULL, 0);
+	if (pBits)
+		memcpy(pBits, pImgPtr, nImgBytes);
+	ReleaseDC(hwnd, hdc);
+
+	GlobalFree(pImgPtr);
+	GlobalFree(bi);
+
+	return hBitmap;
 }
