@@ -5,13 +5,13 @@
 namespace  MTC{namespace Canvas{
 	class ImplCanvas : Util::noncopyable
 	{
-		int height_;
-		int width_;
+		int _height;
+		int _width;
 		unsigned int *buffer;
 
-		ImplCanvas(int width, int height) :width_(width), height_(height)
+		ImplCanvas(int width, int height) :_width(width), _height(height)
 		{
-			buffer = new unsigned int[width_ * height_];
+			buffer = new unsigned int[_width * _height];
 			printf("canvas create\n");
 		}
 	public:
@@ -24,8 +24,6 @@ namespace  MTC{namespace Canvas{
 		{
 			delete canvas;
 		}
-
-
 		virtual ~ImplCanvas()
 		{
 			delete[] buffer;
