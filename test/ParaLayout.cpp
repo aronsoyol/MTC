@@ -1,9 +1,9 @@
 ﻿#pragma once 
 #include "ParaLayout.h"
 #include "scrptrun.h"
-#include "../hb/hb-ft.h"
-#include "../hb/hb-icu.h"
 #include "hb_draw.h"
+#include <hb-ft.h>
+#include <hb-icu.h>
 #include <vector>
 namespace Aqitai{
 	namespace LayoutEngine{
