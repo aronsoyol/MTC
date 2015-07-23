@@ -32,7 +32,7 @@ public:
 
 	virtual void	shape() = 0;
 
-	virtual void	set_text(const wchar_t* text, int length);
+	//virtual void	set_text(const wchar_t* text, int length);
 };
 
 }}

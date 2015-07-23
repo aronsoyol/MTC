@@ -4,7 +4,6 @@
 #include <algorithm>
 #include <vector>
 #include <unicode/brkiter.h>
-#include "hb_draw.h"
 #include "AbstractParaLayout.h"
 #include <ft2build.h>
 #include FT_FREETYPE_H
@@ -135,13 +134,14 @@ namespace MTC{
 		{
 			struct text_line
 			{
-				int start;
-				int end;
-				std::wstring _text;
+				int _start;
+				int _end;
+				int _width;
+				UnicodeString _text;
 				text_line(int start_, int end_) 
-					:start(start_), end(end_){}
-				text_line(const wchar_t* text, int start_, int end_)
-					:start(start_), end(end_), _text(text + start, end_ - start_){}
+					:_start(start_), _end(end_){}
+				text_line(const UnicodeString &text, int start, int end, int width)
+					:_start(start), _end(end), _text(text.getBuffer() + start, end - start), _width(width){}
 			};
 			struct Break
 			{
@@ -149,11 +149,11 @@ namespace MTC{
 				int _end;
 				int _width;
 				Break(int start, int end, int width) :
-					_start(start), _end(end), _width(width){}
+					_start(start), _end(end), _width(width){} 
 			};
 			std::vector<Break> _lineBreakList;
 			std::vector<Break> _charBreakList;
-			std::wstring text;
+			UnicodeString _text;
 			std::vector<Run> run_list;
 			
 			/*
@@ -171,7 +171,7 @@ namespace MTC{
 		private:
 			virtual void	itemize();
 			virtual void	shape();
-			virtual void	place();
+			//virtual void	place();
 
 			virtual int		ShapeRun(int i);
 
@@ -203,16 +203,18 @@ namespace MTC{
 			virtual void	select_text(int start, int length);
 
 			
-			virtual void	set_text(const wchar_t* text, int length);
+			virtual void	set_text(const UnicodeString& text);
+
+
+			int get_char_position(int x, int y, bool* trailling);
+			int get_char_position_from_line(int line_no, int y, bool* trailling);
+
+			bool get_char_location(int char_pos, bool trailling, Point * point);
 
 			/**/
-
-			void draw(HDC dc, int x, int y);
-			void vdraw(HDC hdc, int x, int y);
-			void hdraw(HDC hdc, int x, int y);
 			void draw(unsigned int* buffer, int width, int height, int x, int y);
 			/**/
-			int draw_chars(HDC dc, int start, int end, int x, int y);
+
 			int draw_chars(unsigned int* buffer, int width, int height, int start, int end, int x, int y);
 			int get_chars_width(int start, int end);
 		};

@@ -35,9 +35,6 @@
     <ClInclude Include="test.h">
       <Filter>Header</Filter>
     </ClInclude>
-    <ClInclude Include="hb_draw.h">
-      <Filter>Header</Filter>
-    </ClInclude>
     <ClInclude Include="scrptrun.h">
       <Filter>Header</Filter>
     </ClInclude>
@@ -77,6 +74,9 @@
       <Filter>Source</Filter>
     </ClCompile>
     <ClCompile Include="Canvas.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="utils.cpp">
       <Filter>Source</Filter>
     </ClCompile>
   </ItemGroup>

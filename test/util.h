@@ -1,21 +1,27 @@
 ﻿#ifndef __MTC_UTIL_H
 #define __MTC_UTIL_H
+
+#include <hb-ft.h>
+#include <hb-icu.h>
+#ifdef _WIN32 // Win32 コード
 #include <windows.h>
+#endif
 
 namespace MTC{namespace Util{
+
 	struct Point
 	{
 		long x;
 		long y;
-		Point();
-		Point(long, long);
+		Point() :x(0), y(0){};
+		Point(long X, long Y) :x(X), y(Y){};
 	};
 	struct Size
 	{
 		long width;
 		long height;
-		Size();
-		Size(long w, long h);
+		Size() :width(0), height(0){};
+		Size(long w, long h) :width(w), height(h){};
 	};
 	struct Rect{
 		long	left;
@@ -31,6 +37,31 @@ namespace MTC{namespace Util{
 		long	height();// { bottom - top; }
 		Size&	Size();
 	};
+
+	typedef struct FontOption{
+		static const int MONGOL = 0;
+		static const int OTHER = 1;
+		FT_Library		ft_library;
+		FT_Face			ft_face[2];
+		hb_font_t *		hb_ft_font[2];
+		unsigned int	fore;
+		unsigned int	back;
+		int				LineHeight() const;
+		int				Descender() const;
+		int				Ascender() const;
+		FontOption(int size, int fore, int baack);
+		virtual ~FontOption();
+	} FixedFont;
+
+
+	enum DRAW_MODE
+	{
+		DARW_MODE_OPAQUE = 1,
+		DARW_MODE_TRANSPARENT = 2
+	};
+
+	void FreeTypeDrawBitmap(unsigned int * buffer, int width, int height, DRAW_MODE mode, FT_Bitmap *bitmap, int x, int y, unsigned fore, unsigned back);
+	bool Rotate90Degree(const FT_Bitmap *src, FT_Bitmap *dest);
 }}
 
 #endif /*__MTC_UTIL_H*/
