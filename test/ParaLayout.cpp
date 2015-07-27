@@ -1,10 +1,23 @@
 ﻿#include "ParaLayout.h"
 #include "scrptrun.h"
 #include <hb-ft.h>
-#include <hb-icu.h>
+
 #include "util.h"
+#include "breaker.h"
+#include "scrptitemizer.h"
 #include <vector>
+#if defined ICU
+
+#include <hb-icu.h>
+#include <unicode/uscript.h>
+#include <unicode/brkiter.h>
+
+#endif
+#ifdef JNI
+#include <jni.h>
+#endif
 namespace MTC{	namespace LayoutEngine{
+#if defined ICU
 	static inline const uint16_t * uchar_to_utf16(const UChar* src)
 	{
 		static_assert(sizeof(UChar) == sizeof(uint16_t), "UChar is eq size to uint16_t");
@@ -14,81 +27,112 @@ namespace MTC{	namespace LayoutEngine{
 		return src;
 #endif
 	}
-	class LineBreaker
+	
+	static inline const UChar * utf16_to_uchar(const uint16_t* src)
 	{
-	private:
-		const int *char_width_list;
-		int max_line_width;
-		int _start;
-		int _length;
-		int _current_width;
-		UnicodeString _text;
-		int get_chars_width(int start, int end)
-		{
-			int total = 0;
-			for (int i = start; i < end; i++)
-				total += char_width_list[i];
-			return total;
-		}
-	public:
-		LineBreaker(UnicodeString text, int length, int max_line_width_, const int * char_width_list_) :
-			_text(text), max_line_width(max_line_width_), _current_width(0), _length(length),
-			_start(0), char_width_list(char_width_list_)
-		{
+		static_assert(sizeof(UChar) == sizeof(uint16_t), "UChar is eq size to uint16_t");
+#if defined(_MSC_VER)
+		return reinterpret_cast<const UChar *>(src);
+#else
+		return src;
+#endif
+	}
 
-		}
 
-		void first()
-		{
-			_start = 0;
-		}
-		int width()
-		{
-			return _current_width;
-		}
-		int next()
-		{
-			if (_start == _length)
-				return -1;
-			UErrorCode status;
-			BreakIterator *boundary = BreakIterator::createLineInstance(Locale::getUS(), status);
-			boundary->setText(UnicodeString( _text.getBuffer() + _start));
-			boundary->first();
-			int end = boundary->next();
-			_current_width = get_chars_width(_start, _start + end);
-			if (_current_width >= max_line_width)
-			{
-				delete boundary;
-				boundary = 0;
+	static inline void icu_itemizer(const uint16_t *text, int length, std::vector<Run>& runList)
+	{
+		runList.clear();
 
-				_start += end;
-				return _start;
+		ScriptRunIterator runIter(utf16_to_uchar(text), 0, length);
+
+		while (runIter.next())
+		{
+			int32_t     start = runIter.getScriptStart();
+			int32_t     end = runIter.getScriptEnd();
+			UScriptCode code = runIter.getScriptCode();
+			hb_script_t script = hb_icu_script_to_script(code);
+			runList.emplace_back(start, end - start, script);
+		}
+	}
+
+	static void icu_breaker(const uint16_t* text, int length, std::vector<Break>& breakList)
+	{
+		Breaker *brkItor = new IcuBreaker(BT_LINE);
+		//UnicodeString utext((const UChar*));
+		brkItor->setText(text, length);
+		breakList.clear();
+		int start = brkItor->first();
+		int end = 0;
+		while ((end = brkItor->next()) != BreakIterator::DONE)
+		{
+			breakList.emplace_back(start, end, -1);
+			start = end;
+		}
+		delete brkItor;
+	}
+#endif
+
+	static inline void mtc_itemizer(const uint16_t *text, int length, std::vector<Run>& runList)
+	{
+		runList.clear();
+
+		MTC::ITEMIZER::ScriptItemIterator runIter(text, 0, length);
+
+		while (runIter.next())
+		{
+			int32_t     start = runIter.getScriptStart();
+			int32_t     end = runIter.getScriptEnd();
+			hb_script_t script = runIter.get_hb_script();
+			runList.emplace_back(start, end - start, script);
+		}
+	}
+#ifdef JNI
+	struct JNILoader
+	{
+		/*
+		jvm只能启动一次
+		http://simple-asta.blogspot.jp/p/jni2.html
+		*/
+		JNIEnv *env = 0;
+		JavaVM *jvm = 0;
+		JNILoader()
+		{
+			JavaVMOption options[1];
+			options[0].optionString = "-Djava.class.path=.";
+
+			JavaVMInitArgs vm_args;
+			vm_args.version = JNI_VERSION_1_6;
+			vm_args.options = options;
+			vm_args.nOptions = 1;
+			int res = JNI_CreateJavaVM(&jvm, (void**)&env, &vm_args);
+			if (res != JNI_OK){
+				//std::cout << "cannot run JavaVM : " << res << endl;
+				int failed = 1;
 			}
-			int break_width = 0;
-			int tmp_start = end;
-			while (_current_width + break_width <= max_line_width)
-			{
-				tmp_start = end;
-				_current_width += break_width;
-				if (_start + end == _length)
-				{
-					break;
-				}
-				end = boundary->next();
-
-				break_width = get_chars_width(_start + tmp_start, _start + end);
-
-			}
-			if (boundary)
-			{
-				delete boundary;
-				boundary = 0;
-			}
-
-			_start += tmp_start;
-			return _start;
+		}
+		~JNILoader()
+		{
+			int ret = jvm->DestroyJavaVM();
 		}
 	};
+	JNILoader jniLoader;
+	void jni_breaker(JNIEnv *env, const uint16_t* text, int length, std::vector<Break>& breakList)
+	{
+		Breaker *brkItor = new JNIBreaker(env, BT_LINE);
+		//UnicodeString utext((const UChar*));
+		brkItor->setText(text, length);
+		breakList.clear();
+		int start = brkItor->first();
+		int end = 0;
+		while ((end = brkItor->next()) != -1)
+		{
+			breakList.emplace_back(start, end, -1);
+			start = end;
+		}
+		delete brkItor;
+	}
+#endif
+
 	ParaLayout::ParaLayout(const FontOption  *fontOption_) : fontOption(fontOption_)
 	{
 		//fontOption = new FontOption(50);
@@ -115,71 +159,78 @@ namespace MTC{	namespace LayoutEngine{
 	//}
 	int		ParaLayout::break_line(int max_line_width)
 	{
-		line_list.clear();
-		if (_text.length() == 0)
-		{
-			line_list.emplace_back(_text.getBuffer(), 0, 0, 0);
-			return 1;
-		}
-		if (max_line_width <= 0)
-		{
-			int total_width = get_chars_width(0, _text.length());
-			line_list.emplace_back(_text.getBuffer(), 0, _text.length(), total_width);
+		_line_list.clear();
 
-			return 1;
+		jni_breaker(jniLoader.env, &_text[0], _text.length(), _lineBreakList);
+
+
+		BreakVector::iterator itor = _lineBreakList.begin();
+		
+		for (; itor != _lineBreakList.end(); ++itor)
+		{
+			itor->_width = get_chars_width(itor->_start, itor->_end);
 		}
-		if (char_width_list.size() == 0)
-			return 1;
+
 		int start = 0;
-		LineBreaker breaker(_text.getBuffer(), _text.length(), max_line_width, &char_width_list[0]);
-		breaker.first();
 		int end = 0;
-		while ((end = breaker.next()) != -1)
+		std::vector<std::wstring> str_line_list;
+		int i = 0;
+		int line_width = 0;
+		while ((end = break_get_one_line(start, max_line_width, line_width)) != -1)
 		{
-			line_list.emplace_back(_text.getBuffer(), start, end, breaker.width());
+			_line_list.emplace_back(start, end, line_width);
+			
+			str_line_list.emplace_back(_text.c_str() + start, _text.c_str() + end);
+
 			start = end;
+			i++;
 		}
-		return line_list.size();
+		return _line_list.size();
 	}
-	/*
-	max_line_width - indicate max line width,
-	*/
-	int	ParaLayout::iterate_break_line(int max_line_width, int start_char_pos)
+
+	int		ParaLayout::break_get_one_line(int start, int max_line_width, int& line_width)
 	{
-		return 0;
-		//if (start_char_pos >= text.length())
-		//	return - 1;
-		//UErrorCode status = U_ZERO_ERROR;
-		//BreakIterator* boundary = BreakIterator::createLineInstance(Locale::getUS(), status);
-		//boundary->setText(text.c_str() + start_char_pos);
-		//int32_t start = boundary->first();
-		//
-		//int line_start = 0;
-		//int line_width = 0;
-		//int line = 0;
+		if (start == _text.length())
+			return -1;
 
-		//int32_t end;
-		//do
-		////for ()
-		//{
-		//	end = boundary->next();
-		//	
+		int end = start;
+		int lineWidth = 0;
+		int breakWidth = 0;
+		//#1.find out the first break position behind start 
 
-		//	int break_width = get_chars_width(start, end);
-		//	if (line_width + break_width > max_line_width)
-		//	{
-		//		return start;
-		//	}
-		//	else
-		//	{
-		//		line_width += break_width;
-		//	}
-		//	start = end;// , end = boundary->next();
-		//} while (end != BreakIterator::DONE);
-		//if (end == BreakIterator::DONE)
-		//	return text.length();
+		BreakVector::iterator itor = _lineBreakList.begin();
+		for ( ; itor != _lineBreakList.end(); ++itor)
+		{
+			if (start >= itor->_start && start < itor->_end)
+			{
+				end = itor->_end;
+				++itor;
+				break;
+			}
+				
+		}
+		lineWidth = get_chars_width(start, end);
+
+
+		for (; itor != _lineBreakList.end(); ++itor)
+		{
+			if (lineWidth + itor->_width > max_line_width)
+			{
+				line_width = lineWidth;
+				return itor->_start;
+			}
+			else  if (lineWidth + itor->_width == max_line_width)
+			{
+				line_width = lineWidth;
+				return itor->_end;
+			}else
+			{
+				lineWidth += itor->_width;
+			}
+		}
+		line_width = lineWidth;
+		return _text.length();
 	}
-
 	/*
 	start -
 	*/
@@ -187,44 +238,31 @@ namespace MTC{	namespace LayoutEngine{
 
 	void	ParaLayout::itemize()
 	{
-		run_list.clear();
-		int item_start = 0;// vertBreaker.Start();
-		int item_length = _text.length();// vertBreaker.End() - vertBreaker.Start();
-		std::vector<std::wstring> lines;
-		/*	while (vertBreaker.next())
-			{
-			item_start = vertBreaker.Start();
-			item_length = vertBreaker.End() - vertBreaker.Start();
-			*/
-		ScriptRunIterator runIter(_text.getBuffer() + item_start, 0, item_length);
-
-		while (runIter.next())
-		{
-			int32_t     start = runIter.getScriptStart();
-			int32_t     end = runIter.getScriptEnd();
-			UScriptCode code = runIter.getScriptCode();
-			run_list.emplace_back(_text.getBuffer(), item_start + start, end - start, code);
-			lines.emplace_back(_text.getBuffer() + item_start + start, end - start);
-		}
+#if defined ICU
+		icu_itemizer(&_text[0], _text.size(), _run_list);
+#else
+		mtc_itemizer(&_text[0], _text.size(), _run_list);
+#endif
+		
 	}
 
 	void	ParaLayout::shape()
 	{
-		glyph_list.reserve(_text.length());
+		glyph_list.reserve(_text.size());
 		
 		int g_start = 0;
-		for (int i = 0; i < run_list.size(); i++)
+		for (int i = 0; i < _run_list.size(); i++)
 		{
-			run_list[i].g_start = g_start;
+			_run_list[i].g_start = g_start;
 			int g_len = ShapeRun(i);
-			run_list[i].g_length = g_len;
+			_run_list[i].g_length = g_len;
 			g_start += g_len;
 		}
 	}
 
 	int	ParaLayout::ShapeRun(int run_index)
 	{
-		const Run &		run = run_list[run_index];
+		const Run &		run = _run_list[run_index];
 
 		hb_buffer_t * buffer	= hb_buffer_create();
 		

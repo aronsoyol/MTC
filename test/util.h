@@ -2,7 +2,6 @@
 #define __MTC_UTIL_H
 
 #include <hb-ft.h>
-#include <hb-icu.h>
 #ifdef _WIN32 // Win32 コード
 #include <windows.h>
 #endif

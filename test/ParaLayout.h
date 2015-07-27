@@ -3,7 +3,6 @@
 #include <string>
 #include <algorithm>
 #include <vector>
-#include <unicode/brkiter.h>
 #include "AbstractParaLayout.h"
 #include <ft2build.h>
 #include FT_FREETYPE_H
