@@ -273,11 +273,10 @@ namespace MTC{	namespace LayoutEngine{
 		//
 		//set buffer
 		//	
-		hb_direction_t dir = run.dir();// run.script == USCRIPT_MONGOLIAN ? HB_DIRECTION_LTR : HB_DIRECTION_TTB;
-		hb_script_t scriptTag = hb_icu_script_to_script(run.script);
 		hb_buffer_add_utf16(buffer, uchar_to_utf16(_text.getBuffer()), _text.length(), run.start, run.length);
+		const hb_direction_t dir = run.dir();// run.script == USCRIPT_MONGOLIAN ? HB_DIRECTION_LTR : HB_DIRECTION_TTB;
 		hb_buffer_set_direction(buffer, dir); /* or LTR */
-		hb_buffer_set_script(buffer, scriptTag); /* see hb-unicode.h */
+		hb_buffer_set_script(buffer, run.script); /* see hb-unicode.h */
 		hb_buffer_set_flags(buffer, (hb_buffer_flags_t)(HB_BUFFER_FLAG_PRESERVE_DEFAULT_IGNORABLES | HB_BUFFER_FLAG_EOT));
 		//hb_buffer_guess_segment_properties(buffer);
 		//
@@ -498,7 +497,7 @@ namespace MTC{	namespace LayoutEngine{
 			glyph * glyph_ptr = &(*itor);
 			if (glyph_ptr->cluster < start)
 				continue;
-			const hb_direction_t dir	= glyph_ptr->run->dir();
+			const hb_direction_t dir = glyph_ptr->run->dir();
 			const int fontIndex = fontOption->font_index_from_script(glyph_ptr->run->script);
 			FT_UInt glyph_index = glyph_ptr->index;
 

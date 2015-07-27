@@ -50,85 +50,21 @@ namespace MTC{
 		{
 			int start;
 			int length;
-			std::wstring text_;
 			int g_start;
 			int g_length;
-			UScriptCode script;
-			Run(const wchar_t* text, int start, int length, UScriptCode script) :
-				text_(text + start, length),
-				start(start), length(length), script(script){}
-			//Run(int start, int length, UScriptCode script) :
-			//	start(start), length(length), script(script)
-			//{
-			//	int found = 1;
-			//}
+			hb_script_t script;
+			Run(int start, int length, hb_script_t hb_script) :
+				start(start), length(length), script(hb_script){}
+
 			hb_direction_t dir() const
 			{
-				if (script == USCRIPT_HAN || script == USCRIPT_HIRAGANA || script == USCRIPT_KATAKANA)
+				if (script == HB_SCRIPT_HAN || script == HB_SCRIPT_HIRAGANA || script == HB_SCRIPT_KATAKANA)
 					return HB_DIRECTION_TTB;
 				else
 					return HB_DIRECTION_LTR;
 			}
 		};
-		class VerticalScriptBreaker
-		{
-		private:
-			UErrorCode error;
-			int start;
-			int end;
-			int length;
-			//UScriptCode script; //next script
-			//UScriptCode last_script;
-			const wchar_t* text;
-			bool vertical;
 
-		public:
-			VerticalScriptBreaker(const wchar_t * text_, int length_)
-				:text(text_),start(0), end(0), length(length_), vertical(false){}
-			void first()
-			{
-				start = 0;
-				end = 0;
-
-			}
-			bool next()
-			{
-				if (start == length || length == 0)
-					return false;
-				
-					
-
-				start = end;
-
-				vertical = CanBeVertRun(uscript_getScript(text[start], &error));
-
-				for (int i = start + 1; i < length; i++)
-				{
-					UScriptCode script = uscript_getScript(text[i], &error);
-					if (vertical != CanBeVertRun(script))
-					{
-						end = i;
-						return true;
-					}
-				}
-				end = length;
-				return true;
-			}
-			int Start(){ return start; }
-			int End(){ return end; }
-			bool Vertical(){ return vertical; }
-		private:
-			bool CanBeVertRun(UScriptCode script)
-			{
-				if (script == USCRIPT_HAN || script == USCRIPT_HIRAGANA
-					|| script == USCRIPT_KATAKANA)
-					return true;
-				else 
-					return false;
-			}
-		};
-	
-		
 		class ParaLayout
 		{
 			struct text_line
