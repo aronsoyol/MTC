@@ -56,13 +56,13 @@ void FreeTypeDrawBitmap256(unsigned int * buffer, int width, int height, DRAW_MO
 	unsigned int fontColor = fore;
 	unsigned int backgroundColor = back;// GetSysColor(COLOR_WINDOWFRAME);
 
-	unsigned int fontColorB = ((fontColor & 0x00FF0000) >> 16);
+	unsigned int fontColorR = ((fontColor & 0x00FF0000) >> 16);
 	unsigned int fontColorG = ((fontColor & 0x0000FF00) >> 8);
-	unsigned int fontColorR = (fontColor & 0x000000FF);
+	unsigned int fontColorB = (fontColor & 0x000000FF);
 
-	unsigned int backgroundColorB = ((backgroundColor & 0x00FF0000) >> 16);
+	unsigned int backgroundColorR = ((backgroundColor & 0x00FF0000) >> 16);
 	unsigned int backgroundColorG = ((backgroundColor & 0x0000FF00) >> 8);
-	unsigned int backgroundColorR = (backgroundColor & 0x000000FF);
+	unsigned int backgroundColorB = (backgroundColor & 0x000000FF);
 
 	unsigned int aR = fontColorR - backgroundColorR;
 	unsigned int aG = fontColorG - backgroundColorG;
@@ -71,19 +71,19 @@ void FreeTypeDrawBitmap256(unsigned int * buffer, int width, int height, DRAW_MO
 	float opacity;
 	float opacity2;
 
-	COLORREF col[256];
-
+	unsigned int col[256];
+	#define TORGB(r,g,b) ((((unsigned)(b) | (((unsigned)(g)) << 8)) | (((unsigned)(r)) << 16)))
 	for (int i = 0; i < 256; i++)
 	{
 		int ii = 255 - i;
 
-		int r = cal_table[fontColorR] * i + ii * cal_table[backgroundColorR];
+		unsigned r = cal_table[fontColorR] * i + ii * cal_table[backgroundColorR];
 
-		int g = cal_table[fontColorG] * i + ii * cal_table[backgroundColorG];
+		unsigned g = cal_table[fontColorG] * i + ii * cal_table[backgroundColorG];
 
-		int b = cal_table[fontColorB] * i + ii * cal_table[backgroundColorB];
+		unsigned b = cal_table[fontColorB] * i + ii * cal_table[backgroundColorB];
 
-		col[i] = RGB(b, g, r);
+		col[i] = TORGB(r, g, b);
 		//col[ii] = RGB(255-r, 255-g, 255-b);
 	}
 	int Ymax = std::min(height, y + y_max);
