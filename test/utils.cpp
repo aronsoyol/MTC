@@ -44,4 +44,11 @@ namespace MTC{	namespace Util{
 		}
 		FT_Done_FreeType(ft_library);
 	}
+	int FontOption::font_index_from_script(hb_script_t script) const
+	{
+		if (script == HB_SCRIPT_MONGOLIAN)
+			return MONGOL;
+		else
+			return OTHER;
+	}
 }}

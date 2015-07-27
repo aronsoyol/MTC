@@ -48,6 +48,7 @@ namespace MTC{namespace Util{
 		int				LineHeight() const;
 		int				Descender() const;
 		int				Ascender() const;
+		int				font_index_from_script(hb_script_t) const;
 		FontOption(int size, int fore, int baack);
 		virtual ~FontOption();
 	} FixedFont;

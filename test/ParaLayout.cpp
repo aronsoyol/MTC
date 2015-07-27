@@ -283,7 +283,7 @@ namespace MTC{	namespace LayoutEngine{
 		//
 		//
 		//
-		const int fontIndex = run.script == USCRIPT_MONGOLIAN ? FixedFont::MONGOL : FixedFont::OTHER;
+		const int fontIndex = fontOption->font_index_from_script(run.script);
 		hb_shape(fontOption->hb_ft_font[fontIndex], buffer, NULL, 0);
 
 		int					glyph_count = hb_buffer_get_length(buffer);
@@ -499,7 +499,7 @@ namespace MTC{	namespace LayoutEngine{
 			if (glyph_ptr->cluster < start)
 				continue;
 			const hb_direction_t dir	= glyph_ptr->run->dir();
-			const int fontIndex = glyph_ptr->run->script == USCRIPT_MONGOLIAN ? FixedFont::MONGOL : FixedFont::OTHER;
+			const int fontIndex = fontOption->font_index_from_script(glyph_ptr->run->script);
 			FT_UInt glyph_index = glyph_ptr->index;
 
 			FT_Error error;
