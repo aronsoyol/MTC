@@ -273,8 +273,8 @@ namespace MTC{	namespace LayoutEngine{
 		//
 		//set buffer
 		//	
-		hb_buffer_add_utf16(buffer, uchar_to_utf16(_text.getBuffer()), _text.length(), run.start, run.length);
 		const hb_direction_t dir = run.dir();// run.script == USCRIPT_MONGOLIAN ? HB_DIRECTION_LTR : HB_DIRECTION_TTB;
+		hb_buffer_add_utf16(buffer, &_text[0], _text.length(), run.start, run.length);
 		hb_buffer_set_direction(buffer, dir); /* or LTR */
 		hb_buffer_set_script(buffer, run.script); /* see hb-unicode.h */
 		hb_buffer_set_flags(buffer, (hb_buffer_flags_t)(HB_BUFFER_FLAG_PRESERVE_DEFAULT_IGNORABLES | HB_BUFFER_FLAG_EOT));
@@ -290,7 +290,7 @@ namespace MTC{	namespace LayoutEngine{
 		hb_glyph_position_t *glyph_pos = hb_buffer_get_glyph_positions(buffer, 0);
 
 
-		WCHAR				dbg_info[1000];
+		//WCHAR				dbg_info[1000];
 		//int					pen_x = x;
 		//int					pen_y = y;
 
@@ -339,7 +339,7 @@ namespace MTC{	namespace LayoutEngine{
 				glyph_pos[i].x_offset,
 				glyph_pos[i].y_offset,
 				glyph_info[i].cluster,
-				&run_list[run_index]
+				&_run_list[run_index]
 			);
 		}
 
@@ -347,17 +347,23 @@ namespace MTC{	namespace LayoutEngine{
 		{
 			char_width_list.emplace_back(charWidthList[i]);
 		}
-
+#ifdef _WIN32
 		OutputDebugString(L"\n");
+#endif
 		delete[] charWidthList;
 		hb_buffer_destroy(buffer);
 		return glyph_count;
 	}
-	void	ParaLayout::set_text(const UnicodeString& text)
+	void	ParaLayout::set_text(const std::u16string& text)
 	{
 		_text = text;
-		const wchar_t* str = text.getBuffer();
+
+
+
+#if defined(_WIN32) && defined(_DEBUG)
+		const wchar_t* str = (wchar_t*)&text[0];
 		int length = text.length();
+#endif
 		itemize();
 		shape();
 
@@ -372,11 +378,11 @@ namespace MTC{	namespace LayoutEngine{
 	}
 	int ParaLayout::get_char_position_from_line(int line_no, int y, bool* trailling)
 	{
-		if (line_no >= line_list.size())
+		if (line_no >= _line_list.size())
 		{
 			return _text.length();
 		}
-		const text_line * line = &line_list[line_no];
+		const text_line * line = &_line_list[line_no];
 		int dy = 0;
 		if (y >= line->_width)
 		{
@@ -401,18 +407,18 @@ namespace MTC{	namespace LayoutEngine{
 	}
 	bool ParaLayout::get_char_location(int char_pos, bool trailling, Point * point)
 	{
-		std::vector<text_line>::const_iterator itor = line_list.cbegin();
+		std::vector<text_line>::const_iterator itor = _line_list.cbegin();
 		int line_no = 0;
 		if (char_pos + (int)trailling == _text.length())
 		{
-			point->y = line_list[line_list.size() - 1]._width;
-			point->x = (line_list.size() - 1) * fontOption->LineHeight();
+			point->y = _line_list[_line_list.size() - 1]._width;
+			point->x = (_line_list.size() - 1) * fontOption->LineHeight();
 			return true;
 		}
-		for (; itor < line_list.end() && itor->_end <= char_pos;
+		for (; itor < _line_list.end() && itor->_end <= char_pos;
 			++itor, ++line_no);
 				
-		if (itor != line_list.end() && itor->_end > char_pos && itor->_start <= char_pos)
+		if (itor != _line_list.end() && itor->_end > char_pos && itor->_start <= char_pos)
 		{
 			point->y = get_chars_width(itor->_start, char_pos + (int)trailling);
 			point->x = line_no * fontOption->LineHeight();
@@ -420,37 +426,14 @@ namespace MTC{	namespace LayoutEngine{
 			return true;
 		}
 		return false;
-
 	}
-	//void	ParaLayout::vdraw(HDC hdc, int x, int y)
-	//{
-	//	float line_height =
-	//		fontOption->ft_face[0]->ascender - fontOption->ft_face[0]->descender;
-	//	line_height = line_height * 50 / fontOption->ft_face[0]->units_per_EM;
-	//	std::vector<text_line>::iterator itor = line_list.begin();
-	//	int l = 0;
-	//	for (; itor != line_list.end(); ++itor)
-	//	{
-	//		draw_chars(hdc, (*itor).start, (*itor).end, x + l, y);
-	//		l += line_height;
-	//	}
-	//}
-	//void	ParaLayout::hdraw(HDC hdc, int x, int y)
-	//{
-	//	float line_height =
-	//		fontOption->ft_face[0]->ascender - fontOption->ft_face[0]->descender;
-	//	line_height = line_height * 50 / fontOption->ft_face[0]->units_per_EM;
-
-	//	draw(hdc, x, y + line_height);
-	//}
-
 
 	void	ParaLayout::draw(unsigned int* buffer, int width, int height, int x, int y)
 	{
-		std::vector<text_line>::iterator itor = line_list.begin();
+		std::vector<text_line>::iterator itor = _line_list.begin();
 		int buff_size = width * height;
 		int l = 0;
-		for (; itor != line_list.end(); ++itor)
+		for (; itor != _line_list.end(); ++itor)
 		{
 				
 			draw_chars(buffer, width, height, itor->_start, itor->_end, x + l, y);
@@ -483,7 +466,7 @@ namespace MTC{	namespace LayoutEngine{
 	{
 		/*
 		对于CJK等字形方向和行的方向相对有旋转角度的文字使用通过Harfbuzz,TTB 计算的位置
-		对于蒙文等字形相对于行没有旋转的run应该使用LTB方向设置harfbuzz，并旋转glyph
+		对于蒙文等字形相对于行没有旋转的run应该使用LTB方向设置harfbuzz,并旋转glyph
 		*/
 		glyph_vector::iterator itor = glyph_list.begin();
 
@@ -524,15 +507,14 @@ namespace MTC{	namespace LayoutEngine{
 
 			if (dir == HB_DIRECTION_TTB)
 			{
-				int line_height = fontOption->LineHeight();
-				offset_x = (*itor).x_offset / 64 + line_height / 2;
+				int fit_height = (fontOption->ft_face[FontOption::OTHER]->ascender - fontOption->ft_face[FontOption::OTHER]->descender) >> 6;
+				offset_x = (*itor).x_offset / 64 + fit_height / 2;
 			}
 			else
 			{
 				std::swap(offset_y, offset_x);
 			}
 
-			wchar_t dbg[100];
 			FT_BitmapGlyph bit = (FT_BitmapGlyph)bmp_glyph;
 
 			FT_Bitmap* bmp_ptr = &bit->bitmap;
