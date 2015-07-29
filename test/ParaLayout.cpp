@@ -5,6 +5,7 @@
 #include "breaker.h"
 #include "scrptitemizer.h"
 #include <vector>
+#include <cassert>
 #if defined ICU
 
 #include <hb-icu.h>
@@ -189,6 +190,10 @@ namespace MTC{	namespace LayoutEngine{
 		int line_width = 0;
 		while ((end = break_get_one_line(start, max_line_width, line_width)) != -1)
 		{
+#if defined (_DEBUG)
+			int temp_line_width = get_chars_width(start, end);
+			assert(line_width == temp_line_width);
+#endif
 			_line_list.emplace_back(start, end, line_width);
 			
 			str_line_list.emplace_back(_text.c_str() + start, _text.c_str() + end);
@@ -395,6 +400,10 @@ namespace MTC{	namespace LayoutEngine{
 			return _text.length();
 		}
 		const text_line * line = &_line_list[line_no];
+
+#if defined(_DEBUG) && defined(_WIN32)/*ony for debug*/
+		std::wstring strLine(_text.c_str() + line->_start, _text.c_str() + line->_end);
+#endif
 		int dy = 0;
 		if (y >= line->_width)
 		{
