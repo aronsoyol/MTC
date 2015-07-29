@@ -2,7 +2,14 @@
 #include <vector>
 #include <algorithm>
 namespace MTC{	namespace Util{
+#if  defined (ANDROID)
+	const char* fontName[] = { 
+		"/data/data/org.iisc.mile.indictext.android/files/MongolianWhite.ttf", 
+		"/data/data/org.iisc.mile.indictext.android/files/msyh.ttf" 
+	};
+#else
 	const char* fontName[] = { "../MongolianWhite.ttf", "../msyh.ttf" };
+#endif
 	int FontOption::Ascender() const
 	{
 		return std::max(ft_face[0]->ascender, ft_face[1]->ascender) >> 6;
