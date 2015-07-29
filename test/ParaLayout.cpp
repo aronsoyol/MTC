@@ -250,9 +250,9 @@ namespace MTC{	namespace LayoutEngine{
 	void	ParaLayout::itemize()
 	{
 #if defined ICU
-		icu_itemizer(&_text[0], _text.size(), _run_list);
+		icu_itemizer(const_char16_to_uint16(&_text[0]), _text.size(), _run_list);
 #else
-		mtc_itemizer(&_text[0], _text.size(), _run_list);
+		mtc_itemizer(const_char16_to_uint16(&_text[0]), _text.size(), _run_list);
 #endif
 		
 	}
@@ -284,8 +284,9 @@ namespace MTC{	namespace LayoutEngine{
 		//
 		//set buffer
 		//	
+		
 		const hb_direction_t dir = run.dir();// run.script == USCRIPT_MONGOLIAN ? HB_DIRECTION_LTR : HB_DIRECTION_TTB;
-		hb_buffer_add_utf16(buffer, &_text[0], _text.length(), run.start, run.length);
+		hb_buffer_add_utf16(buffer, const_char16_to_uint16(&_text[0]), _text.length(), run.start, run.length);
 		hb_buffer_set_direction(buffer, dir); /* or LTR */
 		hb_buffer_set_script(buffer, run.script); /* see hb-unicode.h */
 		hb_buffer_set_flags(buffer, (hb_buffer_flags_t)(HB_BUFFER_FLAG_PRESERVE_DEFAULT_IGNORABLES | HB_BUFFER_FLAG_EOT));

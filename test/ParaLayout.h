@@ -9,6 +9,25 @@
 #include FT_FREETYPE_H
 #include FT_STROKER_H
 namespace MTC{
+	static inline const uint16_t * const_char16_to_uint16(const char16_t* src)
+	{
+		static_assert(sizeof(char16_t) == sizeof(uint16_t), "UChar is eq size to uint16_t");
+#if defined(_MSC_VER)
+		return reinterpret_cast<const uint16_t *>(src);
+#else
+		return src;
+#endif
+	}
+
+	static inline const char16_t * const_uint16_to_char16(const uint16_t* src)
+	{
+		static_assert(sizeof(char16_t) == sizeof(uint16_t), "UChar is eq size to uint16_t");
+#if defined(_MSC_VER)
+		return reinterpret_cast<const char16_t *>(src);
+#else
+		return src;
+#endif
+	}
 	namespace LayoutEngine{
 		using namespace Util;
 		struct glyph
