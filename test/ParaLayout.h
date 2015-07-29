@@ -5,6 +5,7 @@
 #include <vector>
 #include "AbstractParaLayout.h"
 #include <ft2build.h>
+#include <jni.h>
 #include FT_FREETYPE_H
 #include FT_STROKER_H
 namespace MTC{
@@ -127,8 +128,14 @@ namespace MTC{
 	public:
 
 		/**/
+#if defined (ANDROID)
+	private:
+		JNIEnv * _jni_env;
+	public:
+		ParaLayout(JNIEnv * jni, const MTC::Util::FontOption  *fontOption);
+#else
 		ParaLayout(const MTC::Util::FontOption  *fontOption);
-			
+#endif
 		/**/
 		~ParaLayout();
 		/*

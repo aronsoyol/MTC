@@ -1,5 +1,4 @@
 ﻿#include "ParaLayout.h"
-#include "scrptrun.h"
 #include <hb-ft.h>
 
 #include "util.h"
@@ -86,7 +85,8 @@ namespace MTC{	namespace LayoutEngine{
 			runList.emplace_back(start, end - start, script);
 		}
 	}
-#ifdef JNI
+#if defined JNI  
+#if !defined(ANDROID)
 	struct JNILoader
 	{
 		/*
@@ -95,6 +95,8 @@ namespace MTC{	namespace LayoutEngine{
 		*/
 		JNIEnv *env = 0;
 		JavaVM *jvm = 0;
+
+		
 		JNILoader()
 		{
 			JavaVMOption options[1];
@@ -109,6 +111,7 @@ namespace MTC{	namespace LayoutEngine{
 				//std::cout << "cannot run JavaVM : " << res << endl;
 				int failed = 1;
 			}
+
 		}
 		~JNILoader()
 		{
@@ -116,6 +119,7 @@ namespace MTC{	namespace LayoutEngine{
 		}
 	};
 	JNILoader jniLoader;
+#endif
 	void jni_breaker(JNIEnv *env, const uint16_t* text, int length, std::vector<Break>& breakList)
 	{
 		Breaker *brkItor = new JNIBreaker(env, BT_LINE);
@@ -133,13 +137,17 @@ namespace MTC{	namespace LayoutEngine{
 	}
 #endif
 
+#if defined(ANDROID)
+	ParaLayout::ParaLayout(JNIEnv * env, const MTC::Util::FontOption  *fontOption_)
+		: _jni_env(env), fontOption(fontOption_)
+	{
+	}
+#else
 	ParaLayout::ParaLayout(const FontOption  *fontOption_) : fontOption(fontOption_)
 	{
-		//fontOption = new FontOption(50);
-		//this->run_list.emplace_back(0, 0, 0, (UScriptCode)0);
-		//fontOption->back = RGB(255, 0, 0);
-		//fontOption->fore = RGB(0,0,0);
 	}
+#endif
+
 	ParaLayout::~ParaLayout()
 	{
 		//delete fontOption;
@@ -161,8 +169,11 @@ namespace MTC{	namespace LayoutEngine{
 	{
 		_line_list.clear();
 
-		jni_breaker(jniLoader.env, &_text[0], _text.length(), _lineBreakList);
-
+#if defined (ANDROID)
+		jni_breaker(_jni_env, (const uint16_t*)&_text[0], _text.length(), _lineBreakList);
+#else
+		jni_breaker(jniLoader.env, (const uint16_t*)&_text[0], _text.length(), _lineBreakList);
+#endif
 
 		BreakVector::iterator itor = _lineBreakList.begin();
 		
