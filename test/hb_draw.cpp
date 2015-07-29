@@ -100,7 +100,11 @@ void FreeTypeDrawBitmap256(unsigned int * buffer, int width, int height, DRAW_MO
 	for (; row < y_max && row + y < height; row++){        /* For each horizontal pixel..        */
 		for (int cl = start_cl; cl < x_max && x + cl < width; cl++){    /* ...in each row of the font bitmap. */
 			int grey = bitmap->buffer[row * x_max + cl];
+#if defined(_WIN32)
 			int yy = height - 1 - (y + row);
+#else
+			int yy = y + row;
+#endif
 			int xx = x + cl;
 			int index = width * yy + xx;
 			assert(yy >= 0 && yy < height);
