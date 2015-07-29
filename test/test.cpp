@@ -3,7 +3,6 @@
 
 #include "stdafx.h"
 #include "test.h"
-#include "scrptrun.h"
 #include "ParaLayout.h"
 #include "Canvas.h"
 #include <hb-ft.h>
@@ -206,10 +205,10 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 	{
 	   int  mx = (short)LOWORD(lParam), my = (short)HIWORD(lParam);
 	   bool trailling = false;
-	   int pos = pLayout->get_char_position(mx - 50, my - 50, &trailling);
+	   int pos = pLayout->get_char_position(mx, my, &trailling);
 	   MTC::Util::Point point;
 	   pLayout->get_char_location(pos, trailling, &point);
-	   SetCaretPos(point.x + 50, point.y+ 50);
+	   SetCaretPos(point.x , point.y);
 	   return 0;
 	}
 	case  WM_SETFOCUS:
@@ -251,7 +250,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 				bmpInfo.bmiHeader.biCompression = BI_RGB;
 
 				int base_line = 50;
-				pLayout->draw(&bitmap_buffer[0], width, height, 50, base_line);
+				pLayout->draw(&bitmap_buffer[0], width, height, 0, 0);
 
 				HBITMAP bmp = LoadPng(L"face/f000.png");
 				
