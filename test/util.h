@@ -6,6 +6,16 @@
 #include <windows.h>
 #endif
 
+/*
+关于颜色的宏
+*/
+#if defined (WIN32) 
+#define TORGB(r,g,b) ((((unsigned)(b) | (((unsigned)(g)) << 8)) | (((unsigned)(r)) << 16)))
+#else
+#define TORGB(r,g,b) ( 0xFF000000 | (((unsigned)(b) | (((unsigned)(g)) << 8)) | (((unsigned)(r)) << 16)))
+#endif
+
+
 namespace MTC{namespace Util{
 
 	struct Point

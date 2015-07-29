@@ -74,7 +74,6 @@ void FreeTypeDrawBitmap256(unsigned int * buffer, int width, int height, DRAW_MO
 	float opacity2;
 
 	unsigned int col[256];
-	#define TORGB(r,g,b) ((((unsigned)(b) | (((unsigned)(g)) << 8)) | (((unsigned)(r)) << 16)))
 	for (int i = 0; i < 256; i++)
 	{
 		int ii = 255 - i;
