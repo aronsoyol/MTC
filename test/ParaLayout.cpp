@@ -237,7 +237,7 @@ namespace MTC{	namespace LayoutEngine{
 			}
 			else  if (lineWidth + itor->_width == max_line_width)
 			{
-				line_width = lineWidth;
+				line_width = lineWidth + itor->_width;
 				return itor->_end;
 			}else
 			{
@@ -341,7 +341,11 @@ namespace MTC{	namespace LayoutEngine{
 				if (cluster_char_count > 1)
 				{
 					int average_width = charWidthList[lastClstIndex - offset] / cluster_char_count;
-					for (int k = lastClstIndex; k < glyph_info[i].cluster; k++)
+					/*
+					消除整数在除运算中产生的误差
+					*/
+					charWidthList[lastClstIndex - offset] -= (cluster_char_count - 1) * average_width;
+					for (int k = lastClstIndex + 1; k < glyph_info[i].cluster; k++)
 					{
 						charWidthList[k - offset] = average_width;
 					}
