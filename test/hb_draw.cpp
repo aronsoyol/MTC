@@ -73,7 +73,8 @@ void FreeTypeDrawBitmap256(unsigned int * buffer, int width, int height, DRAW_MO
 	float opacity;
 	float opacity2;
 
-	unsigned int col[256];
+	unsigned int grey_to_color[256];
+
 	for (int i = 0; i < 256; i++)
 	{
 		int ii = 255 - i;
@@ -84,8 +85,8 @@ void FreeTypeDrawBitmap256(unsigned int * buffer, int width, int height, DRAW_MO
 
 		unsigned b = cal_table[fontColorB] * i + ii * cal_table[backgroundColorB];
 
-		col[i] = TORGB(r, g, b);
-		//col[ii] = RGB(255-r, 255-g, 255-b);
+		grey_to_color[i] = TORGB(r, g, b);
+		//grey_to_color[ii] = RGB(255-r, 255-g, 255-b);
 	}
 	int Ymax = std::min(height, y + y_max);
 	int Xmax = std::min(width, x + x_max);
@@ -96,6 +97,14 @@ void FreeTypeDrawBitmap256(unsigned int * buffer, int width, int height, DRAW_MO
 	if (x < 0)
 		start_cl = -x;
 
+	int firstGrey = row * bitmap->width;
+	int bmpBuffSize = bitmap->rows * bitmap->width;
+	for (; firstGrey < bmpBuffSize && bitmap->buffer[firstGrey] == 0; firstGrey++)
+	{
+	}
+	assert(bitmap->width > 0);
+	row = firstGrey / bitmap->width;
+	assert(row < bitmap->rows);
 	for (; row < y_max && row + y < height; row++){        /* For each horizontal pixel..        */
 		for (int cl = start_cl; cl < x_max && x + cl < width; cl++){    /* ...in each row of the font bitmap. */
 			int grey = bitmap->buffer[row * x_max + cl];
@@ -109,9 +118,9 @@ void FreeTypeDrawBitmap256(unsigned int * buffer, int width, int height, DRAW_MO
 			assert(yy >= 0 && yy < height);
 			assert(xx >= 0 && xx < width);
 			assert(index < buffer_length && index >= 0);
-			//if (/*col[grey] != back &&*/ buffer[index] == back)
+			//if (/*grey_to_color[grey] != back &&*/ buffer[index] == back)
 			if (grey == 255 || buffer[index] == back)
-				buffer[index] = col[grey];
+				buffer[index] = grey_to_color[grey];
 			else if (grey != 0 && buffer[index] != back)
 			{
 			//else
@@ -120,9 +129,9 @@ void FreeTypeDrawBitmap256(unsigned int * buffer, int width, int height, DRAW_MO
 				unsigned int bG = ((buffer[index] & 0x0000FF00) >> 8);
 				unsigned int bB = (buffer[index] & 0x000000FF);
 
-				unsigned int cR = ((col[grey] & 0x00FF0000) >> 16);
-				unsigned int cG = ((col[grey] & 0x0000FF00) >> 8);
-				unsigned int cB = (col[grey] & 0x000000FF);
+				unsigned int cR = ((grey_to_color[grey] & 0x00FF0000) >> 16);
+				unsigned int cG = ((grey_to_color[grey] & 0x0000FF00) >> 8);
+				unsigned int cB = (grey_to_color[grey] & 0x000000FF);
 
 				unsigned int r = (bR + cR) / 2;
 				unsigned int g = (bG + cG) / 2;
