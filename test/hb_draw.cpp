@@ -52,6 +52,8 @@ void FreeTypeDrawBitmap256(unsigned int * buffer, int width, int height, DRAW_MO
 {
 	int x_max = bitmap->width;
 	int y_max = bitmap->rows;
+	if (x_max == 0 || y_max == 0)
+		return;
 	//int x, y;
 	unsigned int fontColor = fore;
 	unsigned int backgroundColor = back;// GetSysColor(COLOR_WINDOWFRAME);
@@ -104,8 +106,27 @@ void FreeTypeDrawBitmap256(unsigned int * buffer, int width, int height, DRAW_MO
 			assert(yy >= 0 && yy < height);
 			assert(xx >= 0 && xx < width);
 			assert(index < buffer_length && index >= 0);
-			if (buffer[index] != 0)
-				buffer[index] = (unsigned int)col[grey];
+			//if (/*col[grey] != back &&*/ buffer[index] == back)
+			if (grey == 255 || buffer[index] == back)
+				buffer[index] = col[grey];
+			else if (grey != 0 && buffer[index] != back)
+			{
+			//else
+			//{
+				unsigned int bR = ((buffer[index] & 0x00FF0000) >> 16);
+				unsigned int bG = ((buffer[index] & 0x0000FF00) >> 8);
+				unsigned int bB = (buffer[index] & 0x000000FF);
+
+				unsigned int cR = ((col[grey] & 0x00FF0000) >> 16);
+				unsigned int cG = ((col[grey] & 0x0000FF00) >> 8);
+				unsigned int cB = (col[grey] & 0x000000FF);
+
+				unsigned int r = (bR + cR) / 2;
+				unsigned int g = (bG + cG) / 2;
+				unsigned int b = (bB + cB) / 2;
+
+				buffer[index] = TORGB(r, g, b);
+			}
 		}
 	}
 
