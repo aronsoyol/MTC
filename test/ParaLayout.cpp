@@ -131,6 +131,8 @@ namespace MTC{	namespace LayoutEngine{
 		int end = 0;
 		while ((end = brkItor->next()) != -1)
 		{
+			if (end > 0 && text[end - 1] == (uint16_t)0x180E)
+				continue;
 			breakList.emplace_back(start, end, -1);
 			start = end;
 		}
