@@ -34,7 +34,7 @@ namespace MTC{namespace Util{
 		//WINDOWS
 		long	width();// { right - left; }
 		long	height();// { bottom - top; }
-		Size&	Size();
+		Size&	size();
 	};
 
 	typedef struct FontOption{
@@ -49,7 +49,7 @@ namespace MTC{namespace Util{
 		int				Descender() const;
 		int				Ascender() const;
 		int				font_index_from_script(hb_script_t) const;
-		FontOption(int size, int fore, int baack);
+		FontOption(int size, int fore, int back);
 		virtual ~FontOption();
 	} FixedFont;
 
