@@ -3,16 +3,17 @@
 
 #include "stdafx.h"
 #include "test.h"
-#include "ParaLayout.h"
-#include "Canvas.h"
-#include <hb-ft.h>
-#include "util.h"
-
-
-
+//#include "ParaLayout.h"
+//#include "Canvas.h"
+//#include <hb-ft.h>
+//#include "util.h"
+#include "mtc.h"
+#include <string>
+#include <vector>
 #include <png.h>
 #include <pngstruct.h>
 #include <pnginfo.h>
+#include <jni.h>
 
 #define MAX_LOADSTRING 100
 
@@ -27,9 +28,10 @@ BOOL				InitInstance(HINSTANCE, int);
 LRESULT CALLBACK	WndProc(HWND, UINT, WPARAM, LPARAM);
 INT_PTR CALLBACK	About(HWND, UINT, WPARAM, LPARAM);
 
-wchar_t *text = L"ᠨᠥᠬᠦᠳ ᠮᠢᠨᠢ᠂ ᠲᠠ ᠨᠠᠷ ᠬᠣᠨᠢᠨ ᠤ ᠨᠣᠣᠰᠤ ᠪᠠᠷ ᠦᠢᠯᠡᠳᠪᠦᠷᠢᠯᠡᠭᠰᠡᠨ ᠭᠣᠶᠤ ᠰᠠᠢᠬᠠᠨ ᠬᠤᠪᠴᠠᠰᠤ ᠡᠮᠦᠰᠦᠭᠡᠳ ᠨᠢᠰᠭᠡᠯ ᠳᠦ ᠰᠠᠭᠤᠵᠤ ᠡᠭᠦᠯᠡᠨ ᠳᠤᠮᠳᠠᠭᠤᠷ ᠠᠶᠠᠯᠠᠬᠤ ᠳᠤ ᠪᠠᠨ; ᠭᠢᠯᠲᠠᠭᠠᠨᠠᠭᠰᠠᠨ ᠰᠠᠢᠬᠠᠨ ᠦᠬᠡᠷ ᠦᠨ ᠠᠷᠠᠰᠤᠨ ᠱᠠᠬᠠᠢ ᠡᠮᠦᠰᠦᠭᠡᠳ ᠴᠠᠷᠳᠠᠮᠠᠯ ᠵᠠᠮ  ᠢᠶᠠᠷ᠂ ᠡᠰᠡᠬᠦᠯ᠎ᠡ ᠴᠡᠩᠬᠡᠷ ᠤᠰᠤ ᠨᠣᠭᠤᠭᠠᠨ ᠤᠳᠠ ᠲᠠᠢ ᠴᠡᠴᠡᠷᠯᠢᠭ  ᠢᠶᠡᠷ ᠵᠤᠭᠠᠯᠠᠬᠤ ᠳᠤ ᠪᠠᠨ; ᠲᠠᠨᠢᠯ ᠰᠠᠢᠬᠠᠨ ᠨᠠᠢᠵᠠ ᠲᠠᠢ ᠪᠠᠨ ᠭᠤᠸᠠᠩᠵᠠᠨ ᠳᠤ ᠪᠠᠭᠤᠵᠤ ᠬᠠᠯᠠᠭᠤᠨ ᠲᠣᠭᠤᠭᠠᠨ ᠳᠤ ᠰᠢᠵᠢᠭᠢᠨᠠᠨ ᠪᠤᠴᠠᠯᠵᠤ ᠪᠠᠢᠭ᠎ᠠ ᠰᠠᠢᠬᠠᠨ ᠠᠮᠲᠠ ᠲᠠᠢ ᠬᠣᠨᠢᠨ ᠮᠢᠬᠠᠨ ᠱᠥᠯᠦ ᠬᠠᠯᠪᠠᠭᠠᠳᠠᠵᠤ ᠬᠤᠨᠳᠠᠭ᠎ᠠ ᠡᠷᠭᠦᠬᠦ ᠳ᠋ᠦ ᠪᠡᠨ᠂ ᠡᠳᠡᠭᠡᠷ ᠶᠠᠭᠤᠮ᠎ᠠ ᠪᠦᠬᠦᠨ ᠦ ᠲᠦᠭᠦᠬᠡᠢ ᠡᠳ᠋ ᠢ ᠬᠠᠩᠭᠠᠬᠤ ᠶᠢᠨ ᠲᠥᠯᠦᠭᠡ ᠮᠠᠯᠴᠢᠨ ᠬᠥᠮᠦᠨ ᠵᠤᠨ ᠤ ᠰᠢᠲᠠᠮ᠎ᠠ ᠨᠠᠷᠠ᠂ ᠬᠠᠪᠤᠷ ᠤᠨ ᠬᠠᠷ᠎ᠠ ᠬᠠᠪᠰᠠᠷᠭ᠎ᠠ᠂ ᠡᠪᠦᠯ ᠦᠨ ᠬᠦᠢᠲᠡᠨ ᠰᠢᠭᠤᠷᠭᠠᠨ ᠳᠤ ᠲᠤᠵᠢ ᠯᠠ ᠮᠠᠯ ᠤᠨ ᠬᠣᠢᠨ᠎ᠠ ᠠᠴᠠ ᠳᠠᠭᠠᠵᠤ᠂ ᠬᠠᠲᠠᠭᠤᠵᠢᠯᠲᠠᠢ ᠬᠥᠳᠡᠯᠮᠦᠷᠢᠯᠡᠵᠦ ᠪᠠᠢᠳᠠᠭ ᠶᠠᠪᠤᠳᠠᠯ ᠰᠡᠳᠭᠢᠯ ᠳᠦ ᠴᠢᠨᠢ ᠣᠷᠤᠳᠠᠭ ᠤᠤ？";
-MTC::LayoutEngine::ParaLayout *pLayout;
-MTC::Util::FontOption *pFontOption;
+wchar_t *text = L"ᠪᠢᠳᠡ ᠪᠣᠯ ᠬᠥᠮᠦᠨ ᠲᠥᠷᠦᠯᠬᠢᠲᠡᠨ ᠦ ᠰᠢᠨ᠎ᠡ ᠲᠡᠦᠬᠡ ᠶᠢ ᠨᠡᠭᠡᠭᠡᠵᠦ ᠪᠠᠢᠭ᠎ᠠ ᠭᠡᠷᠡᠯ ᠰᠠᠴᠤᠷᠠᠩᠭᠤᠢ ᠴᠠᠭ ᠦᠶ᠎ᠡ ᠳᠦ ᠠᠮᠢᠳᠤᠷᠠᠵᠤ ᠪᠠᠢᠭ᠎ᠠ ᠶᠤᠮ᠃ ᠡᠨᠡ ᠬᠦ ᠴᠠᠭ ᠦᠶ᠎ᠡ ᠳᠦ ᠮᠠᠰᠢ ᠣᠯᠠᠨ ᠬᠡᠷᠡᠭ ᠪᠣᠳᠠᠰ ᠲᠤ ᠬᠥᠮᠦᠰ ᠰᠢᠨ᠎ᠡ ᠪᠣᠳᠤᠯ ᠰᠢᠨ᠎ᠡ ᠲᠥᠷᠦᠭᠳᠡᠯ ᠣᠷᠤᠵᠤ ᠪᠠᠢᠨ᠎ᠠ᠃ ᠲᠤᠶᠠᠭ᠎ᠠ ᠰᠠᠴᠤᠷᠠᠭᠤᠯᠤᠭᠰᠠᠨ ᠤᠷᠭᠤᠬᠤ ᠨᠠᠷᠠ᠂ ᠮᠥᠩᠬᠡ ᠨᠣᠭᠤᠭᠠᠨ ᠨᠠᠷᠠᠰᠤ ᠮᠠᠢᠯᠠᠰᠤ᠂ ᠰᠡᠬᠦᠢᠨ ᠰᠦᠨᠳᠡᠷᠯᠡᠭᠰᠡᠨ ᠬᠠᠳᠠ ᠣᠷᠭᠢᠯ᠂ ᠣᠢᠯᠠᠰᠤᠨ ᠳᠣᠯᠭᠢᠶᠠᠯᠠᠭᠰᠠᠨ ᠠᠨᠠᠪᠠᠳ ᠳᠠᠯᠠᠢ ᠶᠢ ᠴᠥᠭᠡᠨ ᠪᠤᠰᠤ ᠬᠥᠮᠦᠰ ᠮᠠᠭᠲᠠᠨ ᠳᠠᠭᠤᠯᠠᠵᠤ ᠪᠠᠢᠬᠤ ᠪᠢᠰᠢ ᠦᠦ？ ᠢᠳᠡᠷᠡᠭᠦᠨ ᠰᠦᠷᠯᠢᠭ ᠴᠠᠭᠠᠨ ᠤᠯᠢᠶᠠᠰᠤ᠂ ᠭᠡᠭᠡᠨ ᠰᠠᠷᠠᠭᠤᠯ ᠳ᠋ᠧᠩ ᠦᠨ ᠭᠡᠷᠡᠯ᠂ ᠠᠭᠰᠤᠮᠨᠠᠨ ᠳᠠᠪᠬᠢᠬᠤ ᠲᠡᠷᠭᠡ᠂ ᠴᠣ᠋ ᠰᠢᠨ᠎ᠡ ᠤᠯᠠᠷᠢᠯ ᠤᠨ ᠪᠢᠴᠢᠭ᠌ ᠢ ᠴᠥᠭᠡᠨ ᠪᠤᠰᠤ ᠬᠥᠮᠦᠰ ᠪᠠᠬᠠᠳᠤᠨ ᠱᠠᠭᠰᠢᠵᠤ ᠪᠠᠢᠬᠤ ᠪᠢᠰᠢ ᠦᠦ？ ᠶᠠᠭᠤᠮᠠᠨ ᠠᠴᠠ ᠨᠢ ᠬᠥᠮᠦᠨ ᠢ ᠨᠢ ᠳᠤᠷᠠᠰᠤᠨ᠎ᠠ ᠭᠡᠭᠴᠢ ᠪᠡᠷ ᠡᠳᠡᠭᠡᠷ ᠵᠦᠢᠯᠡᠰ ᠨᠢ ᠬᠥᠮᠦᠰ ᠲᠦ ᠬᠡᠴᠢᠨᠡᠨ ᠡᠯᠪᠡᠭ ᠪᠠᠶᠠᠯᠢᠭ᠂ ᠭᠦᠨ ᠰᠡᠳᠭᠢᠯᠲᠦ ᠲᠠᠭᠠᠮᠠᠭᠯᠠᠯ ᠢ ᠲᠥᠷᠦᠭᠳᠡᠭᠦᠯᠦᠭᠰᠡᠨ ᠦᠭᠡᠢ ᠪᠤᠢ？";
+// L"例えばDLLの初期化でjvmを起動し、アンロード時にDestoryJavaVM()を呼ぶような作り方が多いと思う。何も悪くないプログラムだが、もしもFreeLibrary( dllHandle ); のようなとこでフリーズしていたら、jvm->DestoryJavaVM()でフリーズしていないか調べてみよう。";
+void *pLayout;
+void *font;
 void readpng(LPBYTE* png, int *width, int *height);
 void DrawBitmap(HDC hdc, HBITMAP hBmp)
 {
@@ -53,10 +55,16 @@ int APIENTRY _tWinMain(HINSTANCE hInstance,
 	
 	int ret = 0;
 	{
-		MTC::Util::FontOption fo(50, RGB(0, 0, 0), RGB(255, 255, 255));
-		MTC::LayoutEngine::ParaLayout layout(&fo);
-		pLayout = &layout;
-		pFontOption = &fo;
+		int p = sizeof(jlong);
+		p&= 0x80000000;
+
+		//MTC::Util::FontOption fo(50, 0x000000, RGB(255, 255, 255));
+		//MTC::LayoutEngine::ParaLayout layout(&fo);
+		//pLayout = &layout;
+		//pFontOption = &fo;
+		font = mtc_font_create(80, 0x000000, RGB(255, 255, 255));
+		pLayout = mtc_create_layout(font);
+
 		UNREFERENCED_PARAMETER(hPrevInstance);
 		UNREFERENCED_PARAMETER(lpCmdLine);
 		//readpng();
@@ -68,7 +76,8 @@ int APIENTRY _tWinMain(HINSTANCE hInstance,
 		LoadString(hInstance, IDS_APP_TITLE, szTitle, MAX_LOADSTRING);
 		LoadString(hInstance, IDC_TEST, szWindowClass, MAX_LOADSTRING);
 
-		layout.set_text(text);
+		mtc_set_text(pLayout, (char16_t*)text, lstrlen(text));
+		//layout.set_text((char16_t*)text);
 
 		MyRegisterClass(hInstance);
 
@@ -90,6 +99,8 @@ int APIENTRY _tWinMain(HINSTANCE hInstance,
 			}
 		}
 		ret = (int)msg.wParam;
+		mtc_destroy_layout(pLayout);
+		mtc_font_destroy(font);
 	}
 	_CrtDumpMemoryLeaks();
 	return ret;
@@ -198,22 +209,24 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 	case WM_SIZE:
 	{
 		int height = HIWORD(lParam);
-		pLayout->break_line(height-100);
+		mtc_break_line(pLayout, height - 100);
 		return 0;
 	}
 	case WM_LBUTTONDOWN:
 	{
-	   int  mx = (short)LOWORD(lParam), my = (short)HIWORD(lParam);
-	   bool trailling = false;
-	   int pos = pLayout->get_char_position(mx, my, &trailling);
-	   MTC::Util::Point point;
-	   pLayout->get_char_location(pos, trailling, &point);
-	   SetCaretPos(point.x , point.y);
-	   return 0;
+		int  mx = (short)LOWORD(lParam), my = (short)HIWORD(lParam);
+		unsigned char trailling = 0;
+		int pos = mtc_get_char_position(pLayout, mx, my, (unsigned char*)&trailling);
+	   
+		int x, y;
+		mtc_get_char_location(pLayout, pos, trailling, &x, &y);
+		SetCaretPos(x, y);
+		return 0;
 	}
 	case  WM_SETFOCUS:
 	{
-		CreateCaret(hWnd, 0, pFontOption->LineHeight(), 2);
+						 
+		CreateCaret(hWnd, 0, mtc_font_line_height(font), 2);
 		SetCaretPos(0, 0);
 		ShowCaret(hWnd);
 		return 0;
@@ -250,12 +263,13 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 				bmpInfo.bmiHeader.biCompression = BI_RGB;
 
 				int base_line = 50;
-				pLayout->draw(&bitmap_buffer[0], width, height, 0, 0);
+				mtc_draw(pLayout, &bitmap_buffer[0], width, height, 0, 0);
 
 				HBITMAP bmp = LoadPng(L"face/f000.png");
 				
 				int ret = SetDIBitsToDevice(ps.hdc, 0, 0, width, height, 0, 0, 0, height, &bitmap_buffer[0], &bmpInfo, DIB_RGB_COLORS);
 				DrawBitmap(ps.hdc, bmp);
+				DeleteObject(bmp);
 
 			}
 
