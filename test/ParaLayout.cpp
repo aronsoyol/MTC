@@ -266,7 +266,12 @@ namespace MTC{	namespace LayoutEngine{
 
 	void	ParaLayout::shape()
 	{
-		glyph_list.reserve(_text.size());
+		glyph_list.clear();
+		char_width_list.clear();
+		if (glyph_list.capacity() < _text.length())
+		{
+			glyph_list.reserve(_text.size());
+		}
 		
 		int g_start = 0;
 		for (int i = 0; i < _run_list.size(); i++)
