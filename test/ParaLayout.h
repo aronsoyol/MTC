@@ -192,6 +192,13 @@ namespace MTC{
 
 		int draw_chars(unsigned int* buffer, int width, int height, int start, int end, int x, int y);
 		int get_chars_width(int start, int end);
+		inline int back_color(){
+			return this->fontOption->back;
+		}
+		inline int fore_color()
+		{
+			return this->fontOption->fore;
+		}
 	};
 }}
 #endif /*__MTC_PARA_LAYOUT_H*/
