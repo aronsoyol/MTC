@@ -241,12 +241,7 @@ namespace MTC{	namespace LayoutEngine{
 
 	void	ParaLayout::itemize()
 	{
-#if defined ICU
-		icu_itemizer(const_char16_to_uint16(&_text[0]), _text.size(), _run_list);
-#else
 		mtc_itemizer(const_char16_to_uint16(&_text[0]), _text.size(), _run_list);
-#endif
-		
 	}
 
 	void	ParaLayout::shape()
