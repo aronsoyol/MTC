@@ -35,12 +35,6 @@
     <ClInclude Include="test.h">
       <Filter>Header</Filter>
     </ClInclude>
-    <ClInclude Include="scrptrun.h">
-      <Filter>Header</Filter>
-    </ClInclude>
-    <ClInclude Include="noncopyable.hpp">
-      <Filter>Header</Filter>
-    </ClInclude>
     <ClInclude Include="util.h">
       <Filter>Header</Filter>
     </ClInclude>
@@ -54,6 +48,9 @@
       <Filter>Header</Filter>
     </ClInclude>
     <ClInclude Include="Canvas.h">
+      <Filter>Header</Filter>
+    </ClInclude>
+    <ClInclude Include="scrptitemizer.h">
       <Filter>Header</Filter>
     </ClInclude>
   </ItemGroup>
