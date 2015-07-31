@@ -38,23 +38,6 @@ namespace MTC{	namespace LayoutEngine{
 #endif
 	}
 
-
-	static inline void icu_itemizer(const uint16_t *text, int length, std::vector<Run>& runList)
-	{
-		runList.clear();
-
-		ScriptRunIterator runIter(utf16_to_uchar(text), 0, length);
-
-		while (runIter.next())
-		{
-			int32_t     start = runIter.getScriptStart();
-			int32_t     end = runIter.getScriptEnd();
-			UScriptCode code = runIter.getScriptCode();
-			hb_script_t script = hb_icu_script_to_script(code);
-			runList.emplace_back(start, end - start, script);
-		}
-	}
-
 	static void icu_breaker(const uint16_t* text, int length, std::vector<Break>& breakList)
 	{
 		Breaker *brkItor = new IcuBreaker(BT_LINE);
