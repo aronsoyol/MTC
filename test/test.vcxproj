@@ -44,6 +44,7 @@
     <LinkIncremental>true</LinkIncremental>
     <LibraryPath>$(LibraryPath)</LibraryPath>
     <IncludePath>../freetype-2.5.0/include/freetype2/;../freetype-2.5.0/include/;../libpng;$(IncludePath)</IncludePath>
+    <ExecutablePath>D:\lo\jdk1.7.0_71\jre\bin\client;$(ExecutablePath)</ExecutablePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
@@ -54,14 +55,14 @@
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
-      <PreprocessorDefinitions>_XKEYCHECK_H;WIN32;_DEBUG;_WINDOWS;NOMINMAX;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>../hb;C:\Users\aron\git\icu\icu4c\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>_XKEYCHECK_H;WIN32;_DEBUG;_WINDOWS;NOMINMAX;JNI;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>D:\lo\jdk1.7.0_71\include\win32;D:\lo\jdk1.7.0_71\include;../hb;C:\Users\aron\git\icu\icu4c\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>usp10.lib;Rpcrt4.lib;icuuc.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>C:\Users\aron\git\icu\icu4c\source\lib</AdditionalLibraryDirectories>
+      <AdditionalDependencies>usp10.lib;Rpcrt4.lib;icuuc.lib;jvm.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>D:\lo\jdk1.7.0_71\lib;C:\Users\aron\git\icu\icu4c\source\lib</AdditionalLibraryDirectories>
     </Link>
     <PostBuildEvent>
       <Command>xcopy /Y /F /S /E $(ProjectDir)face\* $(TargetDir)face\</Command>
@@ -90,8 +91,9 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AbstractParaLayout.h" />
+    <ClInclude Include="Breaker.h" />
     <ClInclude Include="Canvas.h" />
-    <ClInclude Include="noncopyable.hpp" />
+    <ClInclude Include="mtc.h" />
     <ClInclude Include="ParaLayout.h" />
     <ClInclude Include="Resource.h" />
     <ClInclude Include="scrptitemizer.h" />
@@ -102,8 +104,10 @@
     <ClInclude Include="util.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Breaker.cpp" />
     <ClCompile Include="Canvas.cpp" />
     <ClCompile Include="hb_draw.cpp" />
+    <ClCompile Include="mtc.cpp" />
     <ClCompile Include="ParaLayout.cpp" />
     <ClCompile Include="scrptitemizer.cpp" />
     <ClCompile Include="stdafx.cpp">

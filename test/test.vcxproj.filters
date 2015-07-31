@@ -50,8 +50,14 @@
     <ClInclude Include="Canvas.h">
       <Filter>Header</Filter>
     </ClInclude>
+    <ClInclude Include="Breaker.h">
+      <Filter>Header</Filter>
+    </ClInclude>
     <ClInclude Include="scrptitemizer.h">
       <Filter>Header</Filter>
+    </ClInclude>
+    <ClInclude Include="mtc.h">
+      <Filter>Source</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -64,9 +70,6 @@
     <ClCompile Include="hb_draw.cpp">
       <Filter>Source</Filter>
     </ClCompile>
-    <ClCompile Include="scrptrun.cpp">
-      <Filter>Source</Filter>
-    </ClCompile>
     <ClCompile Include="ParaLayout.cpp">
       <Filter>Source</Filter>
     </ClCompile>
@@ -74,6 +77,15 @@
       <Filter>Source</Filter>
     </ClCompile>
     <ClCompile Include="utils.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="Breaker.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="scrptitemizer.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="mtc.cpp">
       <Filter>Source</Filter>
     </ClCompile>
   </ItemGroup>
