@@ -26,8 +26,9 @@ namespace MTC{	namespace Util{
 		/*
 		http://lists.gnu.org/archive/html/freetype/2001-08/msg00066.html
 		*/
-		int line_gap = (ft_face[0]->size->metrics.height - ft_face[0]->size->metrics.ascender) >> 6;
-		return max_ascender - min_descender + line_gap;
+		int line_gap0 = (ft_face[0]->size->metrics.height - ft_face[0]->size->metrics.ascender) >> 6;
+		int line_gap1 = (ft_face[1]->size->metrics.height - ft_face[1]->size->metrics.ascender) >> 6;
+		return max_ascender - min_descender + std::max(line_gap0, line_gap1);
 	}
 	FontOption::FontOption(int size, int fore_, int back_)
 	{

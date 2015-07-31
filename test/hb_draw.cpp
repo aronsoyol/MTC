@@ -119,6 +119,8 @@ void FreeTypeDrawBitmap256(unsigned int * buffer, int width, int height, DRAW_MO
 			assert(xx >= 0 && xx < width);
 			assert(index < buffer_length && index >= 0);
 			//if (/*grey_to_color[grey] != back &&*/ buffer[index] == back)
+			if (buffer[index] == back && grey == 0)
+				continue;
 			if (grey == 255 || buffer[index] == back)
 				buffer[index] = grey_to_color[grey];
 			else if (grey != 0 && buffer[index] != back)
