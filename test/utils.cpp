@@ -12,16 +12,23 @@ namespace MTC{	namespace Util{
 #endif
 	int FontOption::Ascender() const
 	{
-		return std::max(ft_face[0]->ascender, ft_face[1]->ascender) >> 6;
+		return std::max(ft_face[0]->size->metrics.ascender, ft_face[1]->size->metrics.ascender) >> 6;
 	}
 	int FontOption::Descender() const
 	{
-		return std::min(ft_face[0]->descender, ft_face[1]->descender) >> 6;
+		return std::min(ft_face[0]->size->metrics.descender, ft_face[1]->size->metrics.descender) >> 6;
 	}
 	int FontOption::LineHeight() const
 	{
-		int max_ascender = std::max(ft_face[0]->ascender, ft_face[1]->ascender) >> 6;
-		int min_descender = std::min(ft_face[0]->descender, ft_face[1]->descender) >> 6;
+		/*
+		int ad_height0 = ft_face[0]->max_advance_height >> 6;
+		int height0 = ft_face[0]->height >> 6;
+
+		int ad_height1 = ft_face[1]->max_advance_height >> 6;
+		int height1 = ft_face[1]->height >> 6;
+		*/
+		int max_ascender = std::max(ft_face[0]->size->metrics.ascender, (FT_Pos)ft_face[1]->size->metrics.ascender) >> 6;
+		int min_descender = std::min(ft_face[0]->size->metrics.descender, (FT_Pos)ft_face[1]->size->metrics.descender) >> 6;
 
 		/*
 		http://lists.gnu.org/archive/html/freetype/2001-08/msg00066.html
