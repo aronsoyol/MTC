@@ -4,8 +4,8 @@
 namespace MTC{	namespace Util{
 #if  defined (ANDROID)
 	const char* fontName[] = { 
-		"/data/data/org.iisc.mile.indictext.android/files/MongolianWhite.ttf", 
-		"/data/data/org.iisc.mile.indictext.android/files/msyh.ttf" 
+		"/data/data/com.almas.mtc/files/MongolianWhite.ttf",
+		"/data/data/com.almas.mtc/files/msyh.ttf"
 	};
 #else
 	const char* fontName[] = { "../MongolianWhite.ttf", "../msyh.ttf" };
