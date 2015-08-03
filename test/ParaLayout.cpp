@@ -519,7 +519,7 @@ namespace MTC{	namespace LayoutEngine{
 
 			if (dir == HB_DIRECTION_TTB)
 			{
-				int fit_height = (fontOption->ft_face[FontOption::OTHER]->ascender - fontOption->ft_face[FontOption::OTHER]->descender) >> 6;
+				int fit_height = (fontOption->ft_face[FontOption::OTHER]->size->metrics.ascender - fontOption->ft_face[FontOption::OTHER]->size->metrics.descender) >> 6;
 				offset_x = (*itor).x_offset / 64 + fit_height / 2;
 			}
 			else
