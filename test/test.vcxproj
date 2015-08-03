@@ -101,6 +101,7 @@
     <ClInclude Include="targetver.h" />
     <ClInclude Include="test.h" />
     <ClInclude Include="AbstractTextLayout.h" />
+    <ClInclude Include="TextLayout.h" />
     <ClInclude Include="util.h" />
   </ItemGroup>
   <ItemGroup>
