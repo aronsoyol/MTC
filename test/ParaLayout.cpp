@@ -445,10 +445,11 @@ namespace MTC{	namespace LayoutEngine{
 		std::vector<text_line>::iterator itor = _line_list.begin();
 		int buff_size = width * height;
 		int l = 0;
+		int descender = fontOption->Descender();
 		for (; itor != _line_list.end(); ++itor)
 		{
 				
-			draw_chars(buffer, width, height, itor->_start, itor->_end, x + l, y);
+			draw_chars(buffer, width, height, itor->_start, itor->_end, x + l - descender, y);
 				
 			/*实验用的代码，画出字符边界*/
 			int h = 0;
@@ -543,7 +544,7 @@ namespace MTC{	namespace LayoutEngine{
 				bmp_ptr = &newBmp;
 			}
 			FreeTypeDrawBitmap(buffer, width, height, DARW_MODE_TRANSPARENT, bmp_ptr,
-				pen_x + bit_left + offset_x - fontOption->Descender(),
+				pen_x + bit_left + offset_x,
 				pen_y - bit_top - offset_y, fontOption->fore, fontOption->back);
 
 			if (dir != HB_DIRECTION_TTB)
