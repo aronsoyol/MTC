@@ -180,10 +180,9 @@ namespace MTC{	namespace LayoutEngine{
 #if defined (_DEBUG)
 			int temp_line_width = get_chars_width(start, end);
 			assert(line_width == temp_line_width);
+			str_line_list.emplace_back(_text.c_str() + start, _text.c_str() + end);
 #endif
 			_line_list.emplace_back(start, end, line_width);
-			
-			str_line_list.emplace_back(_text.c_str() + start, _text.c_str() + end);
 
 			start = end;
 			i++;
