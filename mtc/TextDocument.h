@@ -5,8 +5,6 @@
 //每行的最大的字符数，超过这个数字则强制换行
 //#define MAX_LINE_LENGTH  102400
 
-
-
 #include <algorithm>
 #include <string.h>
 #include <stdint.h>
@@ -21,11 +19,6 @@
 #include "ParaBuffer.h"
 
 namespace MTC{ namespace DOC{
-
-//#define LBA_NEW_EMPTY_LINE	0
-//#define LBA_REMOVE_LINE		1
-//#define LBA_CHANGE_LINE		2 
-//#define LBA_CHANGE_ALL		3
 
 typedef enum SUPPORTED_CODE_PAGE{
 	NCP_ASCII	= 0,
@@ -160,9 +153,6 @@ private:
 	*/
 	bool			Clear();
 };
-
-
-
 
 }}
 
