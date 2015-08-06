@@ -136,11 +136,6 @@ private:
 	ParaBuffer		mParaBuffer;
 	BufferWatcher * mBufferWatcher;
 
-	/*
-	size in bytes
-	*/
-	uint32_t		Size() const{return mSeq.size();}
-
 	bool			Clear();
 
 	SEQ::sequence	mSeq;
