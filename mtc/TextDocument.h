@@ -95,7 +95,7 @@ public:
 
 	bool		InsertText(const uint32_t offset_chars, const char16_t *text, uint32_t length);
 	uint32_t	EraseText(uint32_t offset_chars, uint32_t length);
-	uint32_t	GetPara(uint32_t nParaNo, char16_t *buffer, uint32_t buflen, uint32_t *off_chars, bool fIncludeBreaker = false);
+	uint32_t	GetPara(uint32_t nParaNo, char16_t *buffer, uint32_t buflen, uint32_t *off_chars, int* breaker_len);
 	bool		GetText(uint32_t offset_chars, uint32_t length_chars, char16_t *buffer, uint32_t *buflen);
 	
 	uint32_t	TextLength() const

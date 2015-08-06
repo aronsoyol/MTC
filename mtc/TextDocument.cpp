@@ -163,31 +163,25 @@ bool TextDocument::GetLineInfoFromOffset(uint32_t offset,  LINE_INFO* pLineInfo 
 //
 //	Retrieve an entire line of text
 //	
-uint32_t TextDocument::GetPara(uint32_t nLineNo, char16_t *buf, uint32_t buflen, uint32_t *off_chars, bool fWithLineBreaker)
+uint32_t TextDocument::GetPara(uint32_t nParaNo, char16_t *buffer, uint32_t buflen, uint32_t *off_chars, int* breaker_len)
 {
-	assert(nLineNo == 0 || nLineNo < mParaBuffer.ParaCount());
-	uint32_t offset_bytes;
-	uint32_t length_bytes;
-	uint32_t offset_chars;
-	uint32_t length_chars;
-
-	//if(!lineinfo_from_lineno(nLineNo, &offset_chars, &length_chars, &offset_bytes, &length_bytes))
-	//{
-	//	*off_chars = 0;	
-	//	return 0;
-	//}
-	offset_chars	= mParaBuffer[nLineNo];
-	length_chars	= mParaBuffer.ParaCount() > 0 ? mParaBuffer.LineLength(nLineNo) : 0;
-	offset_bytes	= charoffset_to_byteoffset(offset_chars);
-	length_bytes	= charoffset_to_byteoffset(offset_chars + length_chars) - offset_bytes; 
-
-	gettext(offset_bytes, length_bytes, buf, &buflen);
+	assert(nParaNo == 0 || nParaNo < mParaBuffer.ParaCount());
 	
-	if(off_chars) *off_chars = offset_chars;
+	uint32_t offset;
+	uint32_t length;
 
-	if(!fWithLineBreaker)
-		buflen -= CRLF_size(buf, buflen);
-	return buflen;
+	offset	= mParaBuffer[nParaNo];
+	length	= mParaBuffer.ParaCount() > 0 ? mParaBuffer.LineLength(nParaNo) : 0;
+	assert(offset + length <= mSeq.size());
+	length	= std::min(length, buflen);
+	length	= mSeq.render(offset, buffer, length);
+	
+	if (off_chars) 
+		*off_chars = offset;
+
+	if (breaker_len)
+		*breaker_len = CRLF_size(buffer, buflen);
+	return length;
 }
 int TextDocument::CRLF_size(char16_t *szText, int nLength)const
 {
@@ -281,7 +275,7 @@ bool TextDocument::InsertText(const uint32_t offset_chars, const char16_t *text,
 	}
 	assert(charCount2 == charCount1 + length);
 
-	return ret > 0 ? true : false;
+	return length > 0 ? true : false;
 }
 
 //
