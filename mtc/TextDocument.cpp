@@ -86,7 +86,6 @@ bool FillHeader(int format, DWORD* pHeader, int * pHeader_length)
 //
 TextDocument::TextDocument(): 
 	mFileFormat(NCP_UTF8),
-	mHeaderSize(0),
 	mBufferWatcher(0)
 {
 	Init();
@@ -108,7 +107,6 @@ TextDocument::~TextDocument()
 bool TextDocument::Clear()
 {
 	mSeq.clear();
-	mHeaderSize		= 0;
 	ResetLineBuffer();
 	assert(mParaBuffer.ParaCount() == 1);
 	return true;
@@ -337,7 +335,7 @@ bool TextDocument::Undo(uint32_t *offset_start, uint32_t *offset_end)
 	if(!mSeq.undo())
 		return false;
 
-	start				= mSeq.event_index() - mHeaderSize;
+	start				= mSeq.event_index();
 	length				= mSeq.event_length();
 
 	*offset_start		= start;
@@ -353,7 +351,7 @@ bool TextDocument::Redo(uint32_t *offset_start, uint32_t *offset_end)
 	if(!mSeq.redo())
 		return false;
 
-	start				= mSeq.event_index() - mHeaderSize;
+	start				= mSeq.event_index() ;
 	length				= mSeq.event_length();
 
 	*offset_start		= start;

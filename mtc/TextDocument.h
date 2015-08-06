@@ -138,16 +138,11 @@ private:
 	ParaBuffer		mParaBuffer;
 	
 	/*
-	外部提供的一个ParaBuffer的监视器，
-	每当文本变化时需要重新扫面全部文本
-	以获取关于段落的信息，这是非常低效
-	率的做法，为了提高效率	所以引入了
-	ParaBuffer，BufferWathcer可以及时
-	的把ParaBuffer的变化通知给前台。
+	外部提供的一个ParaBuffer的监视器，每当文本变化时需要重新扫面全部文	本
+	以获取关于段落的信息，这是非常低效率的做法。所以，为了提高效率而引入了
+	ParaBuffer，BufferWathcer可以及时	地把ParaBuffer的变化通知给前台。
 	*/
 	BufferWatcher * mBufferWatcher;
-
-	bool			Clear();
 
 	/*
 	PieceTable数据结构的内部缓冲
@@ -161,9 +156,9 @@ private:
 	SCP				mFileFormat;
 
 	/*
-	由于内部格式已经确定，这个可能用不着
+	清除缓冲区
 	*/
-	int				mHeaderSize;
+	bool			Clear();
 };
 
 
