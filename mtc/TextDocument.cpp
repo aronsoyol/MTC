@@ -49,7 +49,6 @@ bool IncludeLineBreaker(const char16_t* buffer, int length)
 //	TextDocument constructor
 //
 TextDocument::TextDocument(): 
-	mDocLength_bytes(0),
 	mFileFormat(NCP_UTF8),
 	mHeaderSize(0),
 	mBufferWatcher(0)
@@ -65,60 +64,6 @@ TextDocument::~TextDocument()
 	Clear();
 }
 
-//
-//	Parse the file lo
-//
-//
-//	From the unicode.org FAQ:
-//
-//	00 00 FE FF			UTF-32, big-endian 
-//	FF FE 00 00			UTF-32, little-endian 
-//	FE FF				UTF-16, big-endian 
-//	FF FE				UTF-16, little-endian 
-//	EF BB BF			UTF-8 
-//
-//	Match the first x bytes of the file against the
-//  Byte-Order-Mark (BOM) lookup table
-//
-int TextDocument::detect_file_format(const unsigned char* buffer,int buffer_length,  int *header_size)
-{
-	unsigned char header[4]	= { 0 };
-	int header_len	= std::min(4, buffer_length);
-	for(int i = 0; i < header_len; i++)
-	{
-		header[i] = buffer[i];
-	}
-	for(int i = 0; BOMLOOKUP[i].len; i++)
-	{
-		if(header_len >= BOMLOOKUP[i].len &&
-		   memcmp(header, &BOMLOOKUP[i].bom, BOMLOOKUP[i].len) == 0)
-		{
-			*header_size = BOMLOOKUP[i].len;
-			return BOMLOOKUP[i].type;
-		}
-	}
-
-	*header_size = 0;
-	return NCP_UTF8;	// default to ASCII
-}
-int TextDocument::detect_file_format(int *mHeaderSize)
-{
-	unsigned char header[4] = { 0 };
-	mSeq.render(0, (SEQ::seqchar*)header, sizeof(header) / sizeof(SEQ::seqchar));
-
-	for(int i = 0; BOMLOOKUP[i].len; i++)
-	{
-		if(mDocLength_bytes >= BOMLOOKUP[i].len &&
-		   memcmp(header, &BOMLOOKUP[i].bom, BOMLOOKUP[i].len) == 0)
-		{
-			*mHeaderSize = BOMLOOKUP[i].len;
-			return BOMLOOKUP[i].type;
-		}
-	}
-
-	*mHeaderSize = 0;
-	return NCP_ASCII;	// default to ASCII
-}
 
 
 //
@@ -127,107 +72,28 @@ int TextDocument::detect_file_format(int *mHeaderSize)
 bool TextDocument::Clear()
 {
 	mSeq.clear();
-	mDocLength_bytes	= 0;
 	mHeaderSize		= 0;
 	ResetLineBuffer();
 	assert(mParaBuffer.ParaCount() == 1);
 	return true;
 }
 
-
-
-
 //
-//	Return a UTF-32 character value
+//	Return the number of lines
 //
-int TextDocument::getUtf32(uint32_t offset, uint32_t lenbytes, uint32_t *pch32)
+bool TextDocument::GetText(uint32_t offset, uint32_t length, char16_t *buffer, uint32_t *buflen)
 {
-//	unsigned char	*rawdata   = (unsigned char *)(buffer + offset + mHeaderSize);
-	unsigned char	rawdata[16];
+	assert(buflen && *buflen > length);
+	assert(offset + length <= mSeq.size());
 
-	lenbytes = std::min(16u, lenbytes);
-	mSeq.render(offset + mHeaderSize, rawdata, lenbytes);
+	SEQ::size_w copied_len = mSeq.render(offset, buffer, length);
 
-
-	UTF16   *rawdata_w = (UTF16 *)rawdata;//(char16_t*)(buffer + offset + mHeaderSize);
-	char16_t     ch16;
-	size_t   ch32len = 1;
-	return utf16_to_utf32(rawdata_w, lenbytes / 2, pch32, &ch32len) * sizeof(char16_t);
-}
-
-//
-//	Fetch a buffer of UTF-16 text from the specified byte offset - 
-//  returns the number of characters stored in buf
-//
-//	Depending on how Neatpad was compiled (UNICODE vs ANSI) this function
-//  will always return text in the "native" format - i.e. Unicode or Ansi -
-//  so the necessary conversions will take place here.
-//
-//  TODO: make sure the CR/LF is always fetched in one go
-//        make sure utf-16 surrogates kept together
-//		  make sure that combining chars kept together
-//		  make sure that bidirectional text kep together (will be *hard*) 
-//
-//	offset   - unsigned char offset within underlying data sequence
-//	lenbytes - max number of bytes to process (i.e. to limit to a line)
-//  buf		 - UTF16/ASCII output buffer
-//	plen	 - [in] - length of buffer, [out] - number of code-units stored
-//
-//	returns  - number of bytes processed
-//
-uint32_t TextDocument::gettext(uint32_t offset, uint32_t lenbytes, char16_t *buf, uint32_t *buflen)
-{
-//	unsigned char	*rawdata = (unsigned char *)(buffer + offset + mHeaderSize);
-
-	uint32_t chars_copied = 0;
-	uint32_t bytes_processed = 0;
-	//assert(lenbytes <= mDocLength_bytes);
-	lenbytes = std::min(lenbytes, *buflen);
-	lenbytes = std::min(lenbytes, mDocLength_bytes - offset);
-	//assert(*buflen + 1 > lenbytes);
-	if(offset >= mDocLength_bytes)
+	if (copied_len > 0 && buflen)
 	{
-		*buflen = 0;
-		return 0;
-	}
-
-	while(lenbytes > 0 && *buflen > 0)
-	{
-		unsigned char   rawdata[0x100];
-		size_t rawlen = std::min<uint32_t>(0x100UL, lenbytes);// min(min(lenbytes, 0x100), mDocLength_bytes - offset);
-
-		// get next block of data from the piece-table
-		size_t copied_len = mSeq.render(offset + mHeaderSize, rawdata, rawlen);
-
-		// convert to UTF-16 
-		size_t tmplen = *buflen;
-
-		
-		rawlen = rawdata_to_utf16(rawdata, copied_len, buf, &tmplen);
-
-		lenbytes		-= rawlen;
-		offset			+= rawlen;
-		bytes_processed += rawlen;
-
-		buf				+= tmplen;
-		*buflen			-= tmplen;
-		chars_copied	+= tmplen;
-	}
-
-	*buflen = chars_copied;
-	return bytes_processed;
-}
-//buflen	-	in bytes
-bool TextDocument::GetText(uint32_t char_offset, uint32_t char_length,  char16_t *buf, uint32_t *buflen)
-{
-	long start_bytes = charoffset_to_byteoffset(char_offset);
-	long end_bytes = charoffset_to_byteoffset(char_offset + char_length);
-	long length_bytes	= end_bytes - start_bytes;
-	if (length_bytes > 0 && gettext(start_bytes, length_bytes, buf, buflen) > 0)
-	{
+		*buflen = copied_len;
 		return true;
-	}else
-		return false;
+	}
+	return false;
 }
 
 //
@@ -294,13 +160,6 @@ bool TextDocument::GetLineInfoFromOffset(uint32_t offset,  LINE_INFO* pLineInfo 
 	return GetLineInfo(pLineInfo);
 }
 
-TextIterator TextDocument::iterate(uint32_t offset_chars)
-{
-	uint32_t off_bytes = charoffset_to_byteoffset(offset_chars);
-	uint32_t len_bytes = mDocLength_bytes - off_bytes;
-
-	return TextIterator(off_bytes, len_bytes, this);
-}
 //
 //	Retrieve an entire line of text
 //	
@@ -349,88 +208,6 @@ int TextDocument::CRLF_size(char16_t *szText, int nLength)const
 
 	return 0;
 }
-
-int TextDocument::file_to_utf16(
-								   __in  int		file_format, 
-								   __in  unsigned char   *	buffer, 
-								   __in  size_t		file_length, 
-								    char16_t  *	utf16str, 
-								    size_t *	utf16len
-								)
-{
-	switch(file_format)
-	{
-	// convert from ANSI->UNICODE
-	case NCP_ASCII:
-		return ascii_to_utf16(buffer, file_length, (UTF16 *)utf16str, utf16len);
-		
-	case NCP_UTF8:
-		return utf8_to_utf16(buffer, file_length, (UTF16 *)utf16str, utf16len);
-
-	// already unicode, do a straight memory copy
-	case NCP_UTF16:
-		return 0;
-	//	rawlen /= sizeof(char16_t);
-	//	return copy_utf16((UTF16 *)rawdata, rawlen, (UTF16 *)utf16str, utf16len) * sizeof(char16_t);
-
-	// need to convert from big-endian to little-endian
-	case NCP_UTF16BE:
-		file_length /= sizeof(char16_t);
-		return swap_utf16((UTF16 *)buffer, file_length, (UTF16 *)utf16str, utf16len) * sizeof(char16_t);
-
-	// error! we should *never* reach this point
-	default:
-		*utf16len = 0;
-		return 0;	
-	}
-}
-/*
-Convert the RAW buffer in underlying file-format to UTF-16
-
-	
-utf16len	- [in/out]	on input holds size of utf16str buffer, 
-						on output holds number of utf16 characters stored
-
-returns bytes processed from rawdata
-*/
-size_t TextDocument::rawdata_to_utf16(const unsigned char *rawdata, size_t rawlen, char16_t *utf16str, size_t *utf16len)
-{
-	//rawdate是UTF16的，所以直接拷贝就行
-	rawlen /= sizeof(char16_t);
-	return copy_utf16((UTF16 *)rawdata, rawlen, (UTF16 *)utf16str, utf16len) * sizeof(char16_t);
-}
-
-uint32_t TextDocument::replace_raw(uint32_t offset_bytes, const char16_t *text, uint32_t length, uint32_t erase_chars)
-{
-	unsigned char  buf[0x100];
-	size_t buflen;
-	uint32_t copied;
-	uint32_t rawlen = 0;
-	uint32_t offset = offset_bytes + mHeaderSize;
-
-	uint32_t erase_bytes	= count_chars(offset_bytes, erase_chars);
-	mSeq.group();
-	while(length)
-	{
-		buflen = 0x100;
-		copied = utf16_to_rawdata(text, length, buf, (size_t *)&buflen);
-
-		// do the piece-table replacement!
-		if(!mSeq.replace(offset, buf, buflen, erase_bytes))
-			break;
-
-		text   += copied;
-		length -= copied;
-		rawlen += buflen;
-		offset += buflen;
-
-		erase_bytes = 0;
-	}
-	mSeq.ungroup();
-	mDocLength_bytes = mSeq.size();
-	return rawlen;
-}
-
 //
 //	Insert text at specified character-offset
 //
@@ -571,8 +348,6 @@ bool TextDocument::Redo(uint32_t *offset_start, uint32_t *offset_end)
 	*offset_start		= start;
 	*offset_end			= start + length;
 	
-	mDocLength_bytes	= mSeq.size();
-
 	return true;
 }
 
@@ -591,71 +366,6 @@ bool TextDocument::fillheader(int format, DWORD* pHeader, int * pHeader_length)c
 		}
 	}
 	return false;
-}
-
-bool TextDocument::FindForward(uint32_t start_offset_chars, const char16_t *text, uint32_t length, uint32_t *find_offset)
-{
-	for(Iterator itor	= GetIterator(start_offset_chars);
-		*itor != '\0' ;
-		++ itor )
-	{
-		if(strcmp_(text, length, itor) == 0)
-		{
-			*find_offset = itor.Offset();
-			return true;
-		}
-	}
-	return false;
-}
-bool TextDocument::FindBackward(uint32_t start_offset_chars, const char16_t *text, uint32_t length, uint32_t *find_offset)
-{
-	for(Iterator itor	= GetIterator(start_offset_chars);
-		*itor != (char16_t)0xFFFF ;
-		-- itor )
-	{
-		if(strcmp_(text, length, itor) == 0)
-		{
-			*find_offset = itor.Offset();
-			return true;
-		}
-	}
-	return false;
-}
-
-int	TextDocument::Convert2Utf8(
-								   __in  int		format, 
-								   __in  unsigned char*		buffer, 
-								   __in  size_t		buffer_length, 
-								    unsigned char *		utf8str, 
-								    size_t *	utf8len
-							   )
-{
-	switch(format)
-	{
-	// convert from ANSI->UNICODE
-	case NCP_ASCII:
-		return 0;
-		
-	case NCP_UTF8:
-		return 0;//utf8_to_utf16(buffer, file_length, (UTF16 *)utf16str, utf16len);
-
-	// already unicode, do a straight memory copy
-	case NCP_UTF16:
-		return utf16_to_utf8((UTF16 *)buffer, buffer_length, utf8str,  utf8len);
-		//return 0;
-	//	rawlen /= sizeof(char16_t);
-	//	return copy_utf16((UTF16 *)rawdata, rawlen, (UTF16 *)utf16str, utf16len) * sizeof(char16_t);
-
-	// need to convert from big-endian to little-endian
-	//case NCP_UTF16BE:
-	//	buffer_length /= sizeof(char16_t);
-	//	return swap_utf16((UTF16 *)buffer, buffer_length, (UTF16 *)utf16str, utf16len) * sizeof(char16_t);
-
-	// error! we should *never* reach this point
-	default:
-		*utf8len = 0;
-		return 0;	
-	}
 }
 
 }}

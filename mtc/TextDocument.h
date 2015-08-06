@@ -63,10 +63,11 @@ class BufferWatcher
 };
 class TextDocument
 {
-	friend class TextIterator;
+	using ParaBuffer = MTC::DOC::PARA::ParaBuffer;
+	//friend class TextIterator;
 	friend class CharCmpIterator;
 	typedef CharCmpIterator Iterator;
-
+	
 public:
 	//
 	//单个行的最大的字符数，超过这个数字则强制换行
@@ -96,14 +97,15 @@ public:
 	uint32_t	EraseText(uint32_t offset_chars, uint32_t length);
 	uint32_t	GetPara(uint32_t nParaNo, char16_t *buffer, uint32_t buflen, uint32_t *off_chars, bool fIncludeBreaker = false);
 	bool		GetText(uint32_t offset_chars, uint32_t length_chars, char16_t *buffer, uint32_t *buflen);
-
+	
+	uint32_t	TextLength() const
+	{
+		return mSeq.size();
+	}
+	
 	uint32_t	ParaCount() const
 	{
 		return mParaBuffer.ParaCount();
-	}
-	uint32_t	TextLength() const
-	{
-		return byteoffset_to_charoffset(mDocLength_bytes - mHeaderSize);
 	}
 
 	uint32_t	GetLineNo(uint32_t offset_chars) const;
@@ -133,125 +135,43 @@ public:
 		mBufferWatcher = watcher;
 	}
 private:
-	typedef MTC::DOC::PARA::ParaBuffer ParaBuffer;
 
 	ParaBuffer		mParaBuffer;
 	BufferWatcher * mBufferWatcher;
 	
-	TextIterator	iterate(uint32_t offset);
-	TextIterator	iterate_line(uint32_t lineno, uint32_t *linestart = 0, uint32_t *linelen = 0);
-	TextIterator	iterate_line_offset(uint32_t offset_chars, uint32_t *lineno, uint32_t *linestart = 0);
-	bool			InitLineBuffer();//new one
 
 	/*
 	size in bytes
 	*/
-	uint32_t		Size() const
-	{
-		return mDocLength_bytes;
-	}
-
 	bool	fillheader(int format, DWORD* pHeader, int * pHeader_length)const;
+	uint32_t		Size() const{return mSeq.size();}
 
 	bool	Clear();
 
 
-	uint32_t	lineno_from_offset(uint32_t offset);
-	uint32_t	offset_from_lineno(uint32_t lineno);
 
-	uint32_t	count_chars(uint32_t offset_bytes, uint32_t length_chars) const;
-
-
-	int			file_to_utf16(int format, unsigned char* buffer, size_t buffer_length,  char16_t *utf16str,  size_t *utf16len);
 
 
 	int		CRLF_size(char16_t *szText, int nLength)const;
 
-	bool	lineinfo_from_offset(uint32_t offset_chars, uint32_t *lineno, uint32_t *lineoff_chars, uint32_t *linelen_chars, uint32_t *lineoff_bytes, uint32_t *linelen_bytes);
-	//bool	lineinfo_from_lineno(uint32_t lineno,                      uint32_t *lineoff_chars,  uint32_t *linelen_chars, uint32_t *lineoff_bytes, uint32_t *linelen_bytes);
 
 
 	SEQ::sequence	mSeq;
 
-	uint32_t	mDocLength_bytes;  //include header size
+	/*
+	文件在内部只用UTF16表示
+	mFileFormat指的是文件的输入输出代码页
+	*/
+	SCP				mFileFormat;
 
-	SCP			mFileFormat;
-	int			mHeaderSize;
-
-	
+	/*
+	由于内部格式已经确定，这个可能用不着
+	*/
+	int				mHeaderSize;
 };
 
-class TextIterator
-{
-
-public:
-	// default constructor sets all members to zero
-	TextIterator()
-		: text_doc(0), off_bytes(0), len_bytes(0)
-	{
-	}
-
-	TextIterator(uint32_t off, uint32_t len, TextDocument *td)
-		: text_doc(td), off_bytes(off), len_bytes(len)
-	{
-
-	}
-
-	// default copy-constructor
-	TextIterator(const TextIterator &ti)
-		: text_doc(ti.text_doc), off_bytes(ti.off_bytes), len_bytes(ti.len_bytes)
-	{
-	}
-
-	// assignment operator
-	TextIterator & operator= (TextIterator &ti)
-	{
-		text_doc = ti.text_doc;
-		off_bytes = ti.off_bytes;
-		len_bytes = ti.len_bytes;
-		return *this;
-	}
-	char16_t operator *()
-	{
-		char16_t buf;
-		uint32_t buflen = sizeof(char16_t);
-		//text_doc->gettext(off_bytes, len_bytes, &buf, &buflen);
-		uint32_t len = text_doc->mSeq.render(off_bytes, (SEQ::seqchar*)&buf, sizeof(char16_t) / sizeof(SEQ::seqchar));;
-
-		return (len == sizeof(SEQ::seqchar)) ? buf : '\0';
-	}
 
 
-	uint32_t gettext(char16_t *buf, uint32_t buflen)
-	{
-		if (text_doc)
-		{
-			// get text from the TextDocument at the specified byte-offset
-			uint32_t len = text_doc->gettext(off_bytes, len_bytes, buf, &buflen);
-
-			// adjust the iterator's internal position
-			off_bytes += len;
-			len_bytes -= len;
-
-			return buflen;
-		}
-		else
-		{
-			return 0;
-		}
-	}
-
-	operator bool()
-	{
-		return text_doc ? true : false;
-	}
-
-private:
-
-	TextDocument *	text_doc;
-	uint32_t		off_bytes;
-	uint32_t		len_bytes;
-};
 
 }}
 
