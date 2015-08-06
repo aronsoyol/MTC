@@ -16,7 +16,7 @@ struct LINE_BREAKER
 	uint16_t	len;
 };
 //管理行起始位置和长度的行缓冲区
-//创建后行数为0，所以即使文本是空的，使用前也必须调用Init**，让行缓冲器至少有一行，否则不能用
+//创建后行数为0，所以即使文本是空的，使用前也必须调用Init**，让段落(Paragraph)缓冲器至少有一行，否则不能用
 class ParaBuffer
 {
 	static const int	INIT_SIZE	= 1024;
