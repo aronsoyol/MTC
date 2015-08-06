@@ -53,9 +53,7 @@ char16_t CharCmpIterator::operator *()
 	else if(offset < text_doc->TextLength())
 	{
 		char16_t buf;
-		uint32_t buflen = sizeof(char16_t) ;
-		uint32_t off_b  =text_doc->charoffset_to_byteoffset(offset);
-		uint32_t len = text_doc->mSeq.render(off_b, (SEQ::seqchar*)&buf, sizeof(char16_t) / sizeof(SEQ::seqchar));
+		uint32_t len	= text_doc->mSeq.render(offset, (SEQ::seqchar*)&buf, 1);
 		return buf;
 	}
 	else
