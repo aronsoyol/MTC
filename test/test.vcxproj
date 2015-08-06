@@ -14,7 +14,7 @@
     <ProjectGuid>{E055E530-7018-402D-81E6-161D58D39FCF}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
     <RootNamespace>test</RootNamespace>
-    <ProjectName>hb_test</ProjectName>
+    <ProjectName>main</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
@@ -56,7 +56,7 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>_XKEYCHECK_H;WIN32;_DEBUG;_WINDOWS;NOMINMAX;JNI;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>D:\lo\jdk1.7.0_71\include\win32;D:\lo\jdk1.7.0_71\include;../hb;C:\Users\aron\git\icu\icu4c\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>D:\lo\jdk1.7.0_71\include\win32;D:\lo\jdk1.7.0_71\include;../hb;../mtc;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -90,33 +90,17 @@
     <None Include="test.ico" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="AbstractParaLayout.h" />
-    <ClInclude Include="Breaker.h" />
-    <ClInclude Include="Canvas.h" />
-    <ClInclude Include="mtc.h" />
-    <ClInclude Include="ParaLayout.h" />
     <ClInclude Include="Resource.h" />
-    <ClInclude Include="scrptitemizer.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
     <ClInclude Include="test.h" />
-    <ClInclude Include="AbstractTextLayout.h" />
-    <ClInclude Include="TextLayout.h" />
-    <ClInclude Include="util.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Breaker.cpp" />
-    <ClCompile Include="Canvas.cpp" />
-    <ClCompile Include="hb_draw.cpp" />
-    <ClCompile Include="mtc.cpp" />
-    <ClCompile Include="ParaLayout.cpp" />
-    <ClCompile Include="scrptitemizer.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="test.cpp" />
-    <ClCompile Include="utils.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="test.rc" />
@@ -130,6 +114,9 @@
     </ProjectReference>
     <ProjectReference Include="..\libpng\projects\visualc71\libpng.vcxproj">
       <Project>{0008960e-e0dd-41a6-8265-00b31ddb4c21}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\mtc\mtc.vcxproj">
+      <Project>{3c1e0d39-8757-41e8-9293-625a4f9c2466}</Project>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

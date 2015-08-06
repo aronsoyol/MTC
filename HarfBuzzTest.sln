@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2013
 VisualStudioVersion = 12.0.21005.1
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "hb_test", "test\test.vcxproj", "{E055E530-7018-402D-81E6-161D58D39FCF}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "main", "test\test.vcxproj", "{E055E530-7018-402D-81E6-161D58D39FCF}"
 	ProjectSection(ProjectDependencies) = postProject
 		{D4F57C4E-6682-41C9-A2D6-FED85929C7BF} = {D4F57C4E-6682-41C9-A2D6-FED85929C7BF}
 		{78B079BD-9FC7-4B9E-B4A6-96DA0F00248B} = {78B079BD-9FC7-4B9E-B4A6-96DA0F00248B}
@@ -21,6 +21,8 @@ EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "libpng", "libpng\projects\visualc71\libpng.vcxproj", "{0008960E-E0DD-41A6-8265-00B31DDB4C21}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "zlib", "libpng\projects\visualc71\zlib.vcxproj", "{2D4F8105-7D21-454C-9932-B47CAB71A5C0}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "mtc", "mtc\mtc.vcxproj", "{3C1E0D39-8757-41E8-9293-625A4F9C2466}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -168,6 +170,28 @@ Global
 		{2D4F8105-7D21-454C-9932-B47CAB71A5C0}.Release Singlethreaded|Win32.Build.0 = LIB Release|Win32
 		{2D4F8105-7D21-454C-9932-B47CAB71A5C0}.Release|Win32.ActiveCfg = LIB Release|Win32
 		{2D4F8105-7D21-454C-9932-B47CAB71A5C0}.Release|Win32.Build.0 = LIB Release|Win32
+		{3C1E0D39-8757-41E8-9293-625A4F9C2466}.Debug Multithreaded|Win32.ActiveCfg = Debug|Win32
+		{3C1E0D39-8757-41E8-9293-625A4F9C2466}.Debug Multithreaded|Win32.Build.0 = Debug|Win32
+		{3C1E0D39-8757-41E8-9293-625A4F9C2466}.Debug Singlethreaded|Win32.ActiveCfg = Debug|Win32
+		{3C1E0D39-8757-41E8-9293-625A4F9C2466}.Debug Singlethreaded|Win32.Build.0 = Debug|Win32
+		{3C1E0D39-8757-41E8-9293-625A4F9C2466}.Debug|Win32.ActiveCfg = Debug|Win32
+		{3C1E0D39-8757-41E8-9293-625A4F9C2466}.Debug|Win32.Build.0 = Debug|Win32
+		{3C1E0D39-8757-41E8-9293-625A4F9C2466}.DLL Debug|Win32.ActiveCfg = Debug|Win32
+		{3C1E0D39-8757-41E8-9293-625A4F9C2466}.DLL Debug|Win32.Build.0 = Debug|Win32
+		{3C1E0D39-8757-41E8-9293-625A4F9C2466}.DLL Release|Win32.ActiveCfg = Release|Win32
+		{3C1E0D39-8757-41E8-9293-625A4F9C2466}.DLL Release|Win32.Build.0 = Release|Win32
+		{3C1E0D39-8757-41E8-9293-625A4F9C2466}.DLL VB|Win32.ActiveCfg = Debug|Win32
+		{3C1E0D39-8757-41E8-9293-625A4F9C2466}.DLL VB|Win32.Build.0 = Debug|Win32
+		{3C1E0D39-8757-41E8-9293-625A4F9C2466}.LIB Debug|Win32.ActiveCfg = Debug|Win32
+		{3C1E0D39-8757-41E8-9293-625A4F9C2466}.LIB Debug|Win32.Build.0 = Debug|Win32
+		{3C1E0D39-8757-41E8-9293-625A4F9C2466}.LIB Release|Win32.ActiveCfg = Release|Win32
+		{3C1E0D39-8757-41E8-9293-625A4F9C2466}.LIB Release|Win32.Build.0 = Release|Win32
+		{3C1E0D39-8757-41E8-9293-625A4F9C2466}.Release Multithreaded|Win32.ActiveCfg = Release|Win32
+		{3C1E0D39-8757-41E8-9293-625A4F9C2466}.Release Multithreaded|Win32.Build.0 = Release|Win32
+		{3C1E0D39-8757-41E8-9293-625A4F9C2466}.Release Singlethreaded|Win32.ActiveCfg = Release|Win32
+		{3C1E0D39-8757-41E8-9293-625A4F9C2466}.Release Singlethreaded|Win32.Build.0 = Release|Win32
+		{3C1E0D39-8757-41E8-9293-625A4F9C2466}.Release|Win32.ActiveCfg = Release|Win32
+		{3C1E0D39-8757-41E8-9293-625A4F9C2466}.Release|Win32.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
