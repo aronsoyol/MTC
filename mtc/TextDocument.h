@@ -109,9 +109,9 @@ public:
 		return Iterator(this, offset);
 	}
 
-	int		CodePage()const{ return mFileFormat; }
+	int		CodePage()const{ return mCodePage; }
 
-	int		SetCodePage(SCP cp){ mFileFormat = cp;}
+	int		SetCodePage(SCP cp){ mCodePage = cp; }
 
 	void	ResetParaBuffer()
 	{
@@ -146,7 +146,7 @@ private:
 	文件在内部只用UTF16表示
 	mFileFormat指的是文件的输入输出代码页
 	*/
-	SCP				mFileFormat;
+	SCP				mCodePage;
 
 	/*
 	清除缓冲区

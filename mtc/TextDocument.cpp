@@ -85,7 +85,7 @@ bool FillHeader(int format, DWORD* pHeader, int * pHeader_length)
 //	TextDocument constructor
 //
 TextDocument::TextDocument(): 
-	mFileFormat(NCP_UTF8),
+	mCodePage(NCP_UTF8),
 	mBufferWatcher(0)
 {
 	Init();
