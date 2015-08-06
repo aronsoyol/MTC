@@ -22,9 +22,6 @@
 
 namespace MTC{ namespace DOC{
 
-bool IsLineBreaker(char16_t);
-bool IncludeLineBreaker(char16_t* buffer, int length);
-
 //#define LBA_NEW_EMPTY_LINE	0
 //#define LBA_REMOVE_LINE		1
 //#define LBA_CHANGE_LINE		2 
