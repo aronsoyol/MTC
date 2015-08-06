@@ -15,7 +15,7 @@
 #endif
 
 #include "sequence.h"
-#include "CmpIterator.h"
+#include "CharIterator.h"
 #include "ParaBuffer.h"
 
 namespace MTC{ namespace DOC{
@@ -55,8 +55,8 @@ class TextDocument
 {
 	using ParaBuffer = MTC::DOC::PARA::ParaBuffer;
 	//friend class TextIterator;
-	friend class CharCmpIterator;
-	typedef CharCmpIterator Iterator;
+	friend class CharIterator;
+	typedef  CharIterator Iterator;
 	
 public:
 	//

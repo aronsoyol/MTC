@@ -79,7 +79,7 @@
     <ClInclude Include="AbstractTextLayout.h" />
     <ClInclude Include="Breaker.h" />
     <ClInclude Include="Canvas.h" />
-    <ClInclude Include="CmpIterator.h" />
+    <ClInclude Include="CharIterator.h" />
     <ClInclude Include="ParaBuffer.h" />
     <ClInclude Include="mndebug.h" />
     <ClInclude Include="mtc.h" />
@@ -95,7 +95,7 @@
   <ItemGroup>
     <ClCompile Include="Breaker.cpp" />
     <ClCompile Include="Canvas.cpp" />
-    <ClCompile Include="CmpIterator.cpp" />
+    <ClCompile Include="CharIterator.cpp" />
     <ClCompile Include="hb_draw.cpp" />
     <ClCompile Include="ParaBuffer.cpp" />
     <ClCompile Include="mndebug.cpp" />

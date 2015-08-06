@@ -4,8 +4,9 @@
 #include <cassert>
 #include <vector>
 #include <stdint.h>
-#include "CmpIterator.h"
 #include "MnDebug.h"
+#include "CharIterator.h"
+
 
 
 namespace MTC{ namespace DOC{ namespace PARA{
@@ -38,7 +39,7 @@ private:
 	}
 public:
 	static bool IsLineBreaker(const char16_t*, int * length);
-	static int	IsLineBreaker(CharCmpIterator itor, CharCmpIterator end);
+	static int	IsLineBreaker(CharIterator itor, CharIterator end);
 	ParaBuffer(void);
 	virtual		~ParaBuffer(void);
 	//获取行的开始位置
@@ -60,8 +61,8 @@ public:
 	//
 	bool		InitFromBuffer(const char16_t* pBuffer,const uint32_t nLength);
 	
-	bool		InitFromIterator(CharCmpIterator begin, 
-								CharCmpIterator end);
+	bool		InitFromIterator(CharIterator begin, 
+								CharIterator end);
 
 	//
 	//添加新行

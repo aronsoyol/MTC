@@ -16,7 +16,7 @@ LINE_BREAKER LB[] =
 	{0x00002028, 1},
 	{0x00002029, 1}
 };
-int ParaBuffer::IsLineBreaker(CharCmpIterator itor, CharCmpIterator end)
+int ParaBuffer::IsLineBreaker(CharIterator itor, CharIterator end)
 {
 	WCHAR sample[2];
 	int sampleLen = 0;
@@ -74,12 +74,12 @@ int ParaBuffer::operator [](const int nLineNo) const
 	}
 }
 bool ParaBuffer::InitFromIterator(
-	CharCmpIterator begin, 
-	CharCmpIterator end)
+	CharIterator begin, 
+	CharIterator end)
 {
 	Clear();
 	int last_line_start = 0;
-	CharCmpIterator it	= begin;
+	CharIterator it	= begin;
 	int i= 0;
 	while(it != end)
 	{

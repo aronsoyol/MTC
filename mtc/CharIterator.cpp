@@ -1,7 +1,7 @@
-#include "CmpIterator.h"
+#include "CharIterator.h"
 #include "Textdocument.h"
 namespace MTC{ namespace DOC{
-int strcmp_(const char16_t *text, unsigned long length, CharCmpIterator itor)
+int strcmp(const char16_t *text, unsigned long length, CharIterator itor)
 {
 	int dif = 0;
 	int i = 0;
@@ -11,40 +11,40 @@ int strcmp_(const char16_t *text, unsigned long length, CharCmpIterator itor)
 
 	return dif;
 }
-CharCmpIterator::CharCmpIterator()
+CharIterator::CharIterator()
 	: text_doc(0), offset(0)
 {
 }
-CharCmpIterator::CharCmpIterator(TextDocument *doc, uint32_t offset)
+CharIterator::CharIterator(TextDocument *doc, uint32_t offset)
 	: text_doc(doc), offset(offset)
 {
 
 }
 	// default copy-constructor
-CharCmpIterator::CharCmpIterator(const CharCmpIterator &src) 
+CharIterator::CharIterator(const CharIterator &src) 
 	: text_doc(src.text_doc), offset(src.offset)
 {
 }
 	// assignment operator
-CharCmpIterator& CharCmpIterator::operator = (const CharCmpIterator &src)
+CharIterator& CharIterator::operator = (const CharIterator &src)
 {
 	text_doc	= src.text_doc;
 	offset		= src.offset;
 	return *this;
 }
-CharCmpIterator& CharCmpIterator::operator++()
+CharIterator& CharIterator::operator++()
 {
 	offset ++;
 	//if(offset == text_doc->charCount())
 	return *this;
 }
-CharCmpIterator& CharCmpIterator::operator--()
+CharIterator& CharIterator::operator--()
 {
 	offset --;
 	//if(offset == text_doc->charCount())
 	return *this;
 }
-char16_t CharCmpIterator::operator *()
+char16_t CharIterator::operator *()
 {
 	if(offset < 0)
 	{
@@ -59,15 +59,15 @@ char16_t CharCmpIterator::operator *()
 	else
 		return (char16_t)0x0;
 }
-uint32_t CharCmpIterator::Offset()
+uint32_t CharIterator::Offset()
 {
 	return (uint32_t)std::min<uint32_t>(std::max<long>(0, offset), text_doc->TextLength());
 }
-bool CharCmpIterator::operator == (const CharCmpIterator &src)
+bool CharIterator::operator == (const CharIterator &src)
 {
 	return(!(*this != src));
 }
-bool CharCmpIterator::operator != (const CharCmpIterator &src)
+bool CharIterator::operator != (const CharIterator &src)
 {
 	return(text_doc != src.text_doc  || src.offset != offset);
 }
