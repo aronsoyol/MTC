@@ -135,23 +135,13 @@ private:
 
 	ParaBuffer		mParaBuffer;
 	BufferWatcher * mBufferWatcher;
-	
 
 	/*
 	size in bytes
 	*/
-	bool	fillheader(int format, DWORD* pHeader, int * pHeader_length)const;
 	uint32_t		Size() const{return mSeq.size();}
 
-	bool	Clear();
-
-
-
-
-
-	int		CRLF_size(char16_t *szText, int nLength)const;
-
-
+	bool			Clear();
 
 	SEQ::sequence	mSeq;
 

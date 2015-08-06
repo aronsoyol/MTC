@@ -35,6 +35,7 @@ bool IsLineBreaker(char16_t ch)
 	}
 	return false;
 }
+
 bool IncludeLineBreaker(const char16_t* buffer, int length)
 {
 	for (int i = 0; i < length; i++)
@@ -45,6 +46,41 @@ bool IncludeLineBreaker(const char16_t* buffer, int length)
 	return false;
 }
 
+int CRLF_size(char16_t *szText, int nLength)
+{
+	if (nLength >= 2)
+	{
+		if (szText[nLength - 2] == '\r' && szText[nLength - 1] == '\n')
+			return 2;
+	}
+
+	if (nLength >= 1)
+	{
+		if (szText[nLength - 1] == '\r' || szText[nLength - 1] == '\n' ||
+			szText[nLength - 1] == '\x0b' || szText[nLength - 1] == '\x0c' ||
+			szText[nLength - 1] == '\x85' || szText[nLength - 1] == 0x2028 ||
+			szText[nLength - 1] == 0x2029)
+			return 1;
+	}
+
+	return 0;
+}
+bool FillHeader(int format, DWORD* pHeader, int * pHeader_length)
+{
+	if (pHeader == 0 || pHeader_length == 0) return false;
+	int count = sizeof(BOMLOOKUP) / sizeof(BOM);
+
+	for (int i = 0; i < count; i++)
+	{
+		if (BOMLOOKUP[i].type == format)
+		{
+			*pHeader = BOMLOOKUP[i].bom;
+			*pHeader_length = BOMLOOKUP[i].len;
+			return true;
+		}
+	}
+	return false;
+}
 //
 //	TextDocument constructor
 //
@@ -182,25 +218,6 @@ uint32_t TextDocument::GetPara(uint32_t nParaNo, char16_t *buffer, uint32_t bufl
 	if (breaker_len)
 		*breaker_len = CRLF_size(buffer, buflen);
 	return length;
-}
-int TextDocument::CRLF_size(char16_t *szText, int nLength)const
-{
-	if(nLength >= 2)
-	{
-		if(szText[nLength-2] == '\r' && szText[nLength-1] == '\n') 
-			return 2;
-	}
-
-	if(nLength >= 1)
-	{
-		if( szText[nLength-1] == '\r'	|| szText[nLength-1] == '\n' || 
-			szText[nLength-1] == '\x0b' || szText[nLength-1] == '\x0c' ||
-			szText[nLength-1] == '\x85' || szText[nLength-1] == 0x2028 || 
-			szText[nLength-1] == 0x2029)
-			return 1;
-	}	
-
-	return 0;
 }
 //
 //	Insert text at specified character-offset
@@ -343,23 +360,6 @@ bool TextDocument::Redo(uint32_t *offset_start, uint32_t *offset_end)
 	*offset_end			= start + length;
 	
 	return true;
-}
-
-bool TextDocument::fillheader(int format, DWORD* pHeader, int * pHeader_length)const
-{
-	if(pHeader == 0 || pHeader_length == 0) return false;
-	int count = sizeof(BOMLOOKUP) / sizeof(BOM);
-
-	for(int i = 0; i < count; i++)
-	{
-		if(BOMLOOKUP[i].type == format)
-		{
-			*pHeader		= BOMLOOKUP[i].bom;
-			*pHeader_length = BOMLOOKUP[i].len;
-			return true;
-		}
-	}
-	return false;
 }
 
 }}
