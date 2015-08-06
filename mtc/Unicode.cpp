@@ -1,8 +1,9 @@
-﻿
+﻿#ifdef _WIN32
 #define STRICT
 #define WIN32_LEAN_AND_MEAN
 
 #include <windows.h>
+#endif
 #include <algorithm>
 #include "Unicode.h"
 
@@ -283,31 +284,8 @@ size_t utf16_to_utf8(const UTF16 *utf16str, size_t utf16len, UTF8 *utf8str, size
 size_t ascii_to_utf16(const UTF8 *asciistr, size_t asciilen, UTF16 *utf16str, size_t *utf16len)
 {
 	size_t len = std::min(*utf16len, asciilen);
-
-	MultiByteToWideChar(CP_ACP, 0, (CCHAR*)asciistr, len, (WCHAR *)utf16str, len);
+	utf8_to_utf16(asciistr, asciilen, utf16str, utf16len);
 	*utf16len = len;
-	return len;
-}
-
-//
-//	utf16_to_ascii
-//
-//	Converts UTF-16 to plain ASCII (lossy)
-//
-//	utf16str	- [in]     buffer containing UTF16 characters
-//	utf16len	- [in]     number of WCHARs in buffer
-//	asciistr	- [out]    receives the resulting UTF-16 text
-//	asciilen	- [in/out] on input, specifies length of ascii buffer,
-//						   on output, holds number of chars stored in asciistr
-//
-//	Returns number of characters processed from utf16str
-//
-size_t utf16_to_ascii(const UTF16 *utf16str, size_t utf16len, UTF8 *asciistr, size_t *asciilen)
-{
-	size_t len = std::min(utf16len, *asciilen);
-
-	WideCharToMultiByte(CP_ACP, 0, (LPCWSTR)utf16str, len, (char*)asciistr, *asciilen, 0, 0);
-	*asciilen = len;
 	return len;
 }
 
@@ -394,7 +372,7 @@ size_t utf32_to_utf16(const UTF32 *utf32str, size_t utf32len, UTF16 *utf16str, s
 			}
 			else
 			{
-				*utf16str++ = (WORD)ch32;
+				*utf16str++ = (UTF16)ch32;
 				(*utf16len)--;
 			}
 		}
@@ -415,8 +393,8 @@ size_t utf32_to_utf16(const UTF32 *utf32str, size_t utf32len, UTF16 *utf16str, s
 		{
 			ch32 -= 0x0010000;
 
-			*utf16str++ = (WORD)((ch32 >> 10) + UNI_SUR_HIGH_START);
-			*utf16str++ = (WORD)((ch32 & 0x3ff) + UNI_SUR_LOW_START);
+			*utf16str++ = (UTF16)((ch32 >> 10) + UNI_SUR_HIGH_START);
+			*utf16str++ = (UTF16)((ch32 & 0x3ff) + UNI_SUR_LOW_START);
 
 			(*utf16len) -= 2;
 		}

@@ -18,7 +18,7 @@ LINE_BREAKER LB[] =
 };
 int ParaBuffer::IsLineBreaker(CharIterator itor, CharIterator end)
 {
-	WCHAR sample[2];
+	char16_t sample[2];
 	int sampleLen = 0;
 
 	while(itor != end && sampleLen < 2)
@@ -31,7 +31,7 @@ int ParaBuffer::IsLineBreaker(CharIterator itor, CharIterator end)
 	for(int i = 0; i < lbCount; i++)
 	{
 		int cmplen= std::min<int>(LB[i].len, sampleLen);
-		if(0 == memcmp(sample, &LB[i].lb, sizeof(WCHAR) * cmplen))
+		if (0 == memcmp(sample, &LB[i].lb, sizeof(char16_t)* cmplen))
 		{
 			return cmplen;
 		}
@@ -43,7 +43,7 @@ bool ParaBuffer::IsLineBreaker(const char16_t* string, int * len)
 	int lbCount= sizeof(LB )/sizeof(LINE_BREAKER);
 	for(int i = 0; i < lbCount; i++)
 	{
-		if(0 == memcmp(string, &LB[i].lb, sizeof(WCHAR) * std::min<int>(LB[i].len, *len)))
+		if (0 == memcmp(string, &LB[i].lb, sizeof(char16_t)* std::min<int>(LB[i].len, *len)))
 		{
 			* len = std::min<int>(LB[i].len, *len);
 			return true;
@@ -114,7 +114,7 @@ bool ParaBuffer::InitFromBuffer(const char16_t* pBuffer, const uint32_t nLength)
 
 	Clear();
 	int last_line_start = 0;
-	for(ULONG i = 0; i < nLength;)
+	for(uint32_t i = 0; i < nLength;)
 	{
 		int lb_len = nLength - i;//初始化为剩余的文本长度
 		int next_line_start  = 0;

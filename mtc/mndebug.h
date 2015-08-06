@@ -4,32 +4,15 @@
 extern "C" {
 #endif
 #define DEBUG_LEVEL 1 
-	//#include "stdio.h"
-	//#include <stdarg.h>
-	//#include <wchar.h>
-#include <Windows.h>
-	//#include <stdarg.h>
-	//#include <stdio.h>
-	//#include <iostream>
 
-	void _mndebug(int level, const char * format, ...);
-	//{
-	//	if (level < DEBUG_LEVEL)
-	//		return;
-	//
-	//	va_list arg;
-	//	va_start(arg, format);
-	//	wchar_t buf[512];
-	//
-	//	wsprintf(buf, format, arg);
-	//	OutputDebugString(buf);
-	//	va_end(arg);
-	//
-	//}
+
+void _mndebug(int level, const char * format, ...);
+
 #ifdef	MN_DEBUG
-#define mndebug _mndebug
+#define mndebug(level, format, ...) _mndebug((level), (format), __VA_ARGS__)
 #else	
-#define mndebug() 
+//#define assert(_Expression)     ((void)0)
+#define mndebug(level, format, ...) ((void)0)
 #endif
 #ifdef __cplusplus
 }//extern "C" {

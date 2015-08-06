@@ -65,7 +65,7 @@ int CRLF_size(char16_t *szText, int nLength)
 
 	return 0;
 }
-bool FillHeader(int format, DWORD* pHeader, int * pHeader_length)
+bool FillHeader(int format, uint32_t * pHeader, int * pHeader_length)
 {
 	if (pHeader == 0 || pHeader_length == 0) return false;
 	int count = sizeof(BOMLOOKUP) / sizeof(BOM);
@@ -134,7 +134,7 @@ bool TextDocument::GetText(uint32_t offset, uint32_t length, char16_t *buffer, u
 //	Return the number of lines
 //
 
-bool TextDocument::GetParaInfo(__inout LINE_INFO* pLineInfo)const
+bool TextDocument::GetParaInfo(LINE_INFO* pLineInfo)const
 {
 	return GetParaInfo(pLineInfo->nParaNo, pLineInfo);
 }
