@@ -107,7 +107,7 @@ TextDocument::~TextDocument()
 bool TextDocument::Clear()
 {
 	mSeq.clear();
-	ResetLineBuffer();
+	ResetParaBuffer();
 	assert(mParaBuffer.ParaCount() == 1);
 	return true;
 }
@@ -134,11 +134,11 @@ bool TextDocument::GetText(uint32_t offset, uint32_t length, char16_t *buffer, u
 //	Return the number of lines
 //
 
-bool TextDocument::GetLineInfo(__inout LINE_INFO* pLineInfo)const
+bool TextDocument::GetParaInfo(__inout LINE_INFO* pLineInfo)const
 {
-	return GetLineInfo(pLineInfo->nParaNo, pLineInfo);
+	return GetParaInfo(pLineInfo->nParaNo, pLineInfo);
 }
-bool TextDocument::GetLineInfo(uint32_t nLineNo,  LINE_INFO* pLineInfo) const
+bool TextDocument::GetParaInfo(uint32_t nLineNo,  LINE_INFO* pLineInfo) const
 {
 	if (nLineNo >= mParaBuffer.ParaCount() || pLineInfo == 0)
 		return false;
@@ -148,7 +148,7 @@ bool TextDocument::GetLineInfo(uint32_t nLineNo,  LINE_INFO* pLineInfo) const
 	pLineInfo->nLength = mParaBuffer.LineLength(nLineNo);
 	return true;
 }
-uint32_t TextDocument::GetLineNo(uint32_t offset_chars)const
+uint32_t TextDocument::GetParaNo(uint32_t offset_chars)const
 {
 	int tmp = mParaBuffer[mParaBuffer.ParaCount()];
 	assert(TextLength() >= offset_chars);
@@ -185,13 +185,13 @@ uint32_t TextDocument::GetLineNo(uint32_t offset_chars)const
 	return 0;
 }
 
-bool TextDocument::GetLineInfoFromOffset(uint32_t offset,  LINE_INFO* pLineInfo ) const
+bool TextDocument::GetParaInfoFromOffset(uint32_t offset,  LINE_INFO* pLineInfo ) const
 {
 	assert(offset <= TextLength());
 	assert(pLineInfo != NULL);
 
-	pLineInfo->nParaNo = GetLineNo(offset);
-	return GetLineInfo(pLineInfo);
+	pLineInfo->nParaNo = GetParaNo(offset);
+	return GetParaInfo(pLineInfo);
 }
 
 //
@@ -314,7 +314,7 @@ uint32_t TextDocument::EraseText(uint32_t offset_chars, uint32_t length)
 	mSeq.erase(offset_chars, length);
 	if(bNeadResetLineBuffer)
 	{
-		ResetLineBuffer();
+		ResetParaBuffer();
 		assert(TextLength() == mParaBuffer[mParaBuffer.ParaCount()]);
 		//m_pTextView->OnLineBufferChange(LBA_CHANGE_ALL, 0);
 	}

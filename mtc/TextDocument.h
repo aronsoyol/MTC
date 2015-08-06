@@ -105,11 +105,11 @@ public:
 		return mParaBuffer.ParaCount();
 	}
 
-	uint32_t	GetLineNo(uint32_t offset_chars) const;
+	uint32_t	GetParaNo(uint32_t offset_chars) const;
 
-	bool	GetLineInfo(uint32_t nLineNo, LINE_INFO* pLineInfo = NULL) const;
-	bool	GetLineInfo(LINE_INFO* pLineInfo) const;
-	bool	GetLineInfoFromOffset(uint32_t offset, LINE_INFO* pLineInfo = NULL)const;
+	bool	GetParaInfo(uint32_t nLineNo, LINE_INFO* pLineInfo = NULL) const;
+	bool	GetParaInfo(LINE_INFO* pLineInfo) const;
+	bool	GetParaInfoFromOffset(uint32_t offset, LINE_INFO* pLineInfo = NULL)const;
 
 	Iterator GetIterator(uint32_t offset)
 	{
@@ -120,7 +120,7 @@ public:
 
 	int		SetCodePage(SCP cp){ mFileFormat = cp;}
 
-	void	ResetLineBuffer()
+	void	ResetParaBuffer()
 	{
 		Iterator begin = GetIterator(0);
 		Iterator end = GetIterator(TextLength());
