@@ -24,8 +24,8 @@ extern "C" {
 	void mtc_set_text(void* layout, const uint16_t* text, long length);
 	int  mtc_break_line(void* layout, int height);
 	void mtc_draw(const void* layout, unsigned int* buffer, int width, int height, int x, int y);
-	int  mtc_get_char_position(const void* layout, int x, int y, unsigned char* trailling);
-	void mtc_get_char_location(const void* layout, int char_pos, unsigned char trailling, int* x, int* y);
+	int  mtc_get_char_position(const void* layout, int x, int y, unsigned char* trailing);
+	void mtc_get_char_location(const void* layout, int char_pos, unsigned char trailing, int* x, int* y);
 	
 	
 #ifdef __cplusplus

@@ -46,18 +46,18 @@ void mtc_draw(const void* layout, unsigned int* buffer, int width, int height, i
 {
 	((MTC::LayoutEngine::ParaLayout *)layout)->draw(buffer, width, height, x, y);
 }
-int mtc_get_char_position(const void* layout, int x, int y, unsigned char* trailling)
+int mtc_get_char_position(const void* layout, int x, int y, unsigned char* trailing)
 {
 	bool t = false;
 	int pos = ((MTC::LayoutEngine::ParaLayout *)layout)->get_char_position(x, y, &t);
 
-	*trailling = t ? 1 : 0;
+	*trailing = t ? 1 : 0;
 	return pos;
 }
-void mtc_get_char_location(const void* layout, int char_pos, unsigned char trailling, int* x, int* y)
+void mtc_get_char_location(const void* layout, int char_pos, unsigned char trailing, int* x, int* y)
 {
 	MTC::Util::Point point;
-	if (((MTC::LayoutEngine::ParaLayout *)layout)->get_char_location(char_pos, trailling, &point))
+	if (((MTC::LayoutEngine::ParaLayout *)layout)->get_char_location(char_pos, trailing, &point))
 	{
 		unsigned long ret = 0;
 		static_assert(sizeof(long) == 4, "size of long not eq 4");
