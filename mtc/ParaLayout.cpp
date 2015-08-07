@@ -553,7 +553,7 @@ namespace MTC{	namespace LayoutEngine{
 
 			FT_Done_Glyph(bmp_glyph);
 #ifdef _DEBUG
-			for (int k = 0; k < 25; k++)
+			for (int k = 0; k < 25 && pen_x + k < width; k++)
 			{
 				int buffer_length = width* height;
 				int index = (height - 1 - pen_y) * width + pen_x + k;
