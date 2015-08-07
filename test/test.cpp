@@ -16,7 +16,7 @@
 #include <jni.h>
 
 #define MAX_LOADSTRING 100
-
+#define PADDING 5
 // 全局变量:
 HINSTANCE hInst;								// 当前实例
 TCHAR szTitle[MAX_LOADSTRING];					// 标题栏文本
@@ -62,7 +62,7 @@ int APIENTRY _tWinMain(HINSTANCE hInstance,
 		//MTC::LayoutEngine::ParaLayout layout(&fo);
 		//pLayout = &layout;
 		//pFontOption = &fo;
-		font = mtc_font_create(80, 0x000000, RGB(255, 255, 255));
+		font = mtc_font_create(40, 0x000000, RGB(255, 255, 255));
 		pLayout = mtc_create_layout(font);
 
 		UNREFERENCED_PARAMETER(hPrevInstance);
@@ -209,18 +209,18 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 	case WM_SIZE:
 	{
 		int height = HIWORD(lParam);
-		mtc_break_line(pLayout, height - 100);
+		mtc_break_line(pLayout, height - 2 * PADDING);
 		return 0;
 	}
 	case WM_LBUTTONDOWN:
 	{
-		int  mx = (short)LOWORD(lParam), my = (short)HIWORD(lParam);
+		int  mx = (short)LOWORD(lParam) - PADDING, my = (short)HIWORD(lParam) - PADDING;
 		unsigned char trailling = 0;
 		int pos = mtc_get_char_position(pLayout, mx, my, (unsigned char*)&trailling);
 	   
 		int x, y;
 		mtc_get_char_location(pLayout, pos, trailling, &x, &y);
-		SetCaretPos(x, y);
+		SetCaretPos(x + PADDING, y + PADDING);
 		return 0;
 	}
 	case  WM_SETFOCUS:
@@ -263,7 +263,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 				bmpInfo.bmiHeader.biCompression = BI_RGB;
 
 				int base_line = 50;
-				mtc_draw(pLayout, &bitmap_buffer[0], width, height, 0, 0);
+				mtc_draw(pLayout, &bitmap_buffer[0], width, height, PADDING, PADDING);
 
 				HBITMAP bmp = LoadPng(L"face/f000.png");
 				
