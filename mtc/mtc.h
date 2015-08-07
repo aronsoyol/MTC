@@ -1,4 +1,4 @@
-#ifndef __MTC_H
+﻿#ifndef __MTC_H
 #define  __MTC_H
 #include <stdint.h>
 
@@ -27,7 +27,12 @@ extern "C" {
 	int  mtc_get_char_position(const void* layout, int x, int y, unsigned char* trailing);
 	void mtc_get_char_location(const void* layout, int char_pos, unsigned char trailing, int* x, int* y);
 	
-	
+	/*
+	关于TextDocument的API
+	*/
+	void*mtc_text_buffer_create();
+	void mtc_text_buffer_destroy(void*);
+
 #ifdef __cplusplus
 }
 #endif
