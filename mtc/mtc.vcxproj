@@ -47,7 +47,7 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_DEBUG;_LIB;NOMINMAX;JNI;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>../freetype-2.5.0/include;../hb;D:/lo/jdk1.7.0_71/include;D:/lo/jdk1.7.0_71/include/win32;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../freetype-2.5.0/include;../hb;C:\lo\jdk1.7.0_71_x86\include;C:\lo\jdk1.7.0_71_x86\include\win32;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>

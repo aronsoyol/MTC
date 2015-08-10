@@ -42,9 +42,7 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>true</LinkIncremental>
-    <LibraryPath>$(LibraryPath)</LibraryPath>
     <IncludePath>../freetype-2.5.0/include/freetype2/;../freetype-2.5.0/include/;../libpng;$(IncludePath)</IncludePath>
-    <ExecutablePath>D:\lo\jdk1.7.0_71\jre\bin\client;$(ExecutablePath)</ExecutablePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
@@ -56,13 +54,13 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>_XKEYCHECK_H;WIN32;_DEBUG;_WINDOWS;NOMINMAX;JNI;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>D:\lo\jdk1.7.0_71\include\win32;D:\lo\jdk1.7.0_71\include;../hb;../mtc;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\lo\jdk1.7.0_71_x86\include\win32;C:\lo\jdk1.7.0_71_x86\include;../hb;../mtc;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>usp10.lib;Rpcrt4.lib;icuuc.lib;jvm.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>D:\lo\jdk1.7.0_71\lib;C:\Users\aron\git\icu\icu4c\source\lib</AdditionalLibraryDirectories>
+      <AdditionalDependencies>usp10.lib;Rpcrt4.lib;jvm.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>C:\lo\jdk1.7.0_71_x86\lib</AdditionalLibraryDirectories>
     </Link>
     <PostBuildEvent>
       <Command>xcopy /Y /F /S /E $(ProjectDir)face\* $(TargetDir)face\</Command>
