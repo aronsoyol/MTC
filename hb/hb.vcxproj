@@ -95,7 +95,6 @@
     <ClInclude Include="hb-face.h" />
     <ClInclude Include="hb-font.h" />
     <ClInclude Include="hb-ft.h" />
-    <ClInclude Include="hb-icu.h" />
     <ClInclude Include="hb-ot-font.h" />
     <ClInclude Include="hb-ot-layout.h" />
     <ClInclude Include="hb-ot-shape-complex-arabic-win1256.hh" />
@@ -166,7 +165,6 @@
     <ClCompile Include="hb-fallback-shape.cc" />
     <ClCompile Include="hb-font.cc" />
     <ClCompile Include="hb-ft.cc" />
-    <ClCompile Include="hb-icu.cc" />
     <ClCompile Include="hb-ot-font.cc" />
     <ClCompile Include="hb-ot-layout.cc" />
     <ClCompile Include="hb-ot-map.cc" />
