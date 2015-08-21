@@ -91,6 +91,7 @@
     <ClInclude Include="TextLayout.h" />
     <ClInclude Include="Unicode.h" />
     <ClInclude Include="util.h" />
+    <ClInclude Include="VirtualView.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Breaker.cpp" />
@@ -106,6 +107,7 @@
     <ClCompile Include="TextDocument.cpp" />
     <ClCompile Include="Unicode.cpp" />
     <ClCompile Include="utils.cpp" />
+    <ClCompile Include="VirtualView.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
