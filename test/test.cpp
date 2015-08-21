@@ -32,6 +32,7 @@ wchar_t *text = L"ᠪᠢᠳᠡ ᠪᠣᠯ ᠬᠥᠮᠦᠨ ᠲᠥᠷᠦᠯᠬᠢ�
 // L"例えばDLLの初期化でjvmを起動し、アンロード時にDestoryJavaVM()を呼ぶような作り方が多いと思う。何も悪くないプログラムだが、もしもFreeLibrary( dllHandle ); のようなとこでフリーズしていたら、jvm->DestoryJavaVM()でフリーズしていないか調べてみよう。";
 void *pLayout;
 void *font;
+void* doc;
 void readpng(LPBYTE* png, int *width, int *height);
 void DrawBitmap(HDC hdc, HBITMAP hBmp)
 {
