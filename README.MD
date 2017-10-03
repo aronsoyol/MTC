@@ -15,4 +15,8 @@
 
 ***
 
-安卓版：[https://gitee.com/aronsoyol/MTCA](https://gitee.com/aronsoyol/MTCA)
+- 安卓版：
+
+码云：[https://gitee.com/aronsoyol/MTCA](https://gitee.com/aronsoyol/MTCA)
+
+github:[https://www.github.com/aronsoyol/mtca](https://www.github.com/aronsoyol/mtca)
