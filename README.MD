@@ -15,7 +15,13 @@
 
 ***
 
-- 安卓版：
+
+## 两点注意
+
+1. JDK必须是32位版的
+2. 系统的PATH里必须有JAVA的路径
+
+## 安卓版：
 
 码云：[https://gitee.com/aronsoyol/MTCA](https://gitee.com/aronsoyol/MTCA)
 
