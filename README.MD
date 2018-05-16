@@ -7,7 +7,7 @@
 而且蒙古文是竖排的，这一点也是很多软件，或者控件不支持的。
 所以想要解决蒙古文的显示问题，一定要从底层的图形显示，以及文本渲染等等开始着手开发。
 
-有些人用java开发了一些能够显示和编辑蒙文的APP但是java本身不支持蒙古文OpenType字体，所以不是完美的的解决方案。先要完美的支持蒙古文OpenType字体只能用C++实现。
+有些人用java开发了一些能够显示和编辑蒙文的APP但是java本身不支持蒙古文OpenType字体，所以不是完美的的解决方案。想要完美的支持蒙古文OpenType字体只能用C++实现。
 
 这里提供的C++代码展示了如何在VC++环境中调用FreeType和HarfBuzz来渲染和显示蒙古文的方法。
 
@@ -21,6 +21,17 @@
 1. JDK必须是32位版的
 2. 系统的PATH里必须有JAVA的路径
 
+## 使用JDK的理由
+
+使用了jdk的BreakIterator进行切字，也可以使用ICU
+如果使用JDK就定义JNI宏，否则就定义ICU宏
+
+## 何为"切字"
+
+[http://userguide.icu-project.org/boundaryanalysis](http://userguide.icu-project.org/boundaryanalysis)
+
+C:\Program Files (x86)\Java\jdk1.8.0_171\jre\bin\client
+C:\Program Files (x86)\Java\jdk1.8.0_171\jre\bin\client
 ## 安卓版：
 
 码云：[https://gitee.com/aronsoyol/MTCA](https://gitee.com/aronsoyol/MTCA)
