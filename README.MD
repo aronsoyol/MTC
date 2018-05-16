@@ -19,19 +19,20 @@
 ## 两点注意
 
 1. JDK必须是32位版的
-2. 系统的PATH里必须有JAVA的路径
+2. 系统的PATH里必须有JAVA的路径（如果现报找不到JVM.dll的错误，可能就是path里没有java路径的原因）
 
 ## 使用JDK的理由
 
-使用了jdk的BreakIterator进行切字，也可以使用ICU
-如果使用JDK就定义JNI宏，否则就定义ICU宏
+使用了jdk的BreakIterator进行切字，也可以使用ICU。
+
+如果使用JDK就定义JNI宏，使用ICU就定义ICU宏，二选一。
 
 ## 何为"切字"
 
 [http://userguide.icu-project.org/boundaryanalysis](http://userguide.icu-project.org/boundaryanalysis)
+如果你会java就试一下BreakIterator的功能。
 
-C:\Program Files (x86)\Java\jdk1.8.0_171\jre\bin\client
-C:\Program Files (x86)\Java\jdk1.8.0_171\jre\bin\client
+
 ## 安卓版：
 
 码云：[https://gitee.com/aronsoyol/MTCA](https://gitee.com/aronsoyol/MTCA)
