@@ -21,11 +21,11 @@
 
 ## 使用JDK的理由
 
-使用了jdk的BreakIterator进行切字，也可以使用ICU。
+使用了jdk的BreakIterator进行切文本，也可以使用ICU。
 
 如果使用JDK就定义JNI宏，使用ICU就定义ICU宏，二选一。
 
-## 何为"切字"
+## 何为"切文本"
 
 [http://userguide.icu-project.org/boundaryanalysis](http://userguide.icu-project.org/boundaryanalysis)
 
